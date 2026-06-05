@@ -23,18 +23,18 @@ const els = {
   offersList: document.getElementById("offers-list"),
 };
 
-const FIELD_LABELS = {
-  comercializadora_actual: "Tu comercializador",
-  tarifa_acceso: "Tarifa de acceso",
-  region: "Región",
-  codigo_postal: "Código postal",
-  potencia_p1_kw: "Potencia P1",
-  consumo_kwh_punta: "Consumo punta",
-  consumo_kwh_llano: "Consumo llano",
-  consumo_kwh_valle: "Consumo valle",
-  total_factura_eur: "Total factura",
-  periodo_facturacion_dias: "Período facturación",
-};
+const FIELD_KEYS = [
+  "comercializadora_actual",
+  "tarifa_acceso",
+  "region",
+  "codigo_postal",
+  "potencia_p1_kw",
+  "consumo_kwh_punta",
+  "consumo_kwh_llano",
+  "consumo_kwh_valle",
+  "total_factura_eur",
+  "periodo_facturacion_dias",
+];
 
 const FIELD_UNITS = {
   potencia_p1_kw: "kW",
@@ -42,10 +42,11 @@ const FIELD_UNITS = {
   consumo_kwh_llano: "kWh",
   consumo_kwh_valle: "kWh",
   total_factura_eur: "€",
-  periodo_facturacion_dias: "días",
+  periodo_facturacion_dias: { es: "días", en: "days" },
 };
 
 let activeRunId = null;
+let lastResult = null;
 
 function showOnly(view) {
   for (const v of [els.uploadView, els.loadingView, els.resultView]) {
@@ -132,7 +133,7 @@ els.form.addEventListener("submit", async (e) => {
     await loadResult();
   } catch (err) {
     showOnly(els.uploadView);
-    setError(err.message || "Error inesperado");
+    setError(err.message || I18N.t("error_unexpected"));
   }
 });
 
@@ -140,6 +141,10 @@ els.form.addEventListener("submit", async (e) => {
   el.addEventListener("change", () => {
     if (activeRunId) loadResult();
   });
+});
+
+I18N.onChange(() => {
+  if (lastResult) renderResult(lastResult);
 });
 
 async function loadResult() {
@@ -154,37 +159,38 @@ async function loadResult() {
     const res = await fetch(`${API_BASE}/api/result/${encodeURIComponent(activeRunId)}?${qs}`);
     if (res.status === 404) {
       showOnly(els.uploadView);
-      setError("La sesión ha caducado. Sube tu factura de nuevo.");
+      setError(I18N.t("session_expired"));
       return;
     }
     if (!res.ok) throw new Error(`Error ${res.status}`);
     const data = await res.json();
+    lastResult = data;
     renderResult(data);
     markStep(els.stepRank, "done");
     showOnly(els.resultView);
   } catch (err) {
-    setError(err.message || "Error al cargar resultado");
+    setError(err.message || I18N.t("error_loading"));
   }
 }
 
 function renderResult(data) {
   renderProfile(data.profile_summary, data.extraction);
   els.userTotal.textContent = data.user_total_eur
-    ? `· tu factura: ${formatEur(data.user_total_eur)}`
+    ? `· ${I18N.t("your_bill")}: ${formatEur(data.user_total_eur)}`
     : "";
   renderOffers(data.ranked_offers);
 }
 
 function renderProfile(profile, extraction) {
   els.profileGrid.innerHTML = "";
-  for (const [key, label] of Object.entries(FIELD_LABELS)) {
+  for (const key of FIELD_KEYS) {
     const val = profile[key];
     if (val === null || val === undefined || val === "") continue;
     const row = document.createElement("div");
     row.className = "row";
     const k = document.createElement("div");
     k.className = "key";
-    k.textContent = label;
+    k.textContent = I18N.t(`field_${key}`);
     const v = document.createElement("div");
     v.className = "val";
     v.textContent = formatVal(key, val);
@@ -195,7 +201,7 @@ function renderProfile(profile, extraction) {
   const defaulted = extraction.defaulted_fields || [];
   if (defaulted.length > 0) {
     els.defaultedNote.hidden = false;
-    els.defaultedNote.textContent = `Estimados a partir del total: ${defaulted.join(", ")}.`;
+    els.defaultedNote.textContent = `${I18N.t("defaulted_prefix")}: ${defaulted.join(", ")}.`;
   } else {
     els.defaultedNote.hidden = true;
   }
@@ -206,7 +212,7 @@ function renderOffers(offers) {
   if (!offers || offers.length === 0) {
     const p = document.createElement("p");
     p.className = "ranking-note";
-    p.textContent = "Ninguna oferta coincide con los filtros seleccionados.";
+    p.textContent = I18N.t("no_offers");
     els.offersList.appendChild(p);
     return;
   }
@@ -232,8 +238,8 @@ function renderOffers(offers) {
     const badges = document.createElement("div");
     badges.className = "badges";
     appendBadge(badges, typeLabel(o.tipo_precio), typeClass(o.tipo_precio));
-    if (o.verde === "si") appendBadge(badges, "verde", "verde");
-    if (o.penalizacion === "si") appendBadge(badges, "permanencia", "pen");
+    if (o.verde === "si") appendBadge(badges, I18N.t("badge_verde"), "verde");
+    if (o.penalizacion === "si") appendBadge(badges, I18N.t("badge_permanencia"), "pen");
 
     body.appendChild(comer);
     body.appendChild(oferta);
@@ -248,12 +254,12 @@ function renderOffers(offers) {
     sav.className = "savings";
     if (o.savings_vs_user_eur > 0) {
       sav.classList.add("pos");
-      sav.textContent = `ahorra ${formatEur(o.savings_vs_user_eur)}`;
+      sav.textContent = `${I18N.t("save_x")} ${formatEur(o.savings_vs_user_eur)}`;
     } else if (o.savings_vs_user_eur < 0) {
       sav.classList.add("neg");
-      sav.textContent = `+${formatEur(Math.abs(o.savings_vs_user_eur))} más`;
+      sav.textContent = `+${formatEur(Math.abs(o.savings_vs_user_eur))} ${I18N.t("more_x")}`;
     } else {
-      sav.textContent = "mismo precio";
+      sav.textContent = I18N.t("same_price");
     }
     money.appendChild(imp);
     money.appendChild(sav);
@@ -273,9 +279,9 @@ function appendBadge(container, text, cls) {
 }
 
 function typeLabel(t) {
-  if (t === "fijo") return "precio fijo";
-  if (t === "flexible") return "flexible";
-  if (t === "pvpc") return "pvpc";
+  if (t === "fijo") return I18N.t("type_fijo");
+  if (t === "flexible") return I18N.t("type_flexible");
+  if (t === "pvpc") return I18N.t("type_pvpc");
   return t || "—";
 }
 function typeClass(t) {
@@ -287,10 +293,12 @@ function typeClass(t) {
 function formatEur(v) {
   const n = Number(v);
   if (Number.isNaN(n)) return "—";
-  return n.toFixed(2).replace(".", ",") + " €";
+  const decimal = I18N.lang === "en" ? "." : ",";
+  return n.toFixed(2).replace(".", decimal) + " €";
 }
 function formatVal(key, val) {
-  const unit = FIELD_UNITS[key];
+  let unit = FIELD_UNITS[key];
+  if (unit && typeof unit === "object") unit = unit[I18N.lang] || unit.es;
   if (unit === "€") return formatEur(val);
   if (typeof val === "number") return val + (unit ? " " + unit : "");
   return String(val);
