@@ -140,7 +140,12 @@ main { padding: 96px 0 96px; }
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
 }
+#upload-view .verified { margin-left: auto; margin-right: auto; }
+#upload-view #upload-form { align-items: stretch; }
+#upload-view button[type="submit"] { align-self: center; }
+#upload-view .how-mini { text-align: left; }
 .how-mini {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
