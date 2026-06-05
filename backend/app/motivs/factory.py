@@ -4,7 +4,7 @@ import json
 from collections import Counter
 from typing import Any, Literal
 
-from motivs_core import SyncPipeline, load_contract_yaml
+from motivs_core import Pipeline, SyncPipeline, load_contract_yaml
 from motivs_core.adapters.memory import (
     EnvSecrets,
     InMemoryRegistryStore,
@@ -21,38 +21,56 @@ from backend.app.motivs.registry_fs import FileSystemRegistryStore
 ContractKind = Literal["factura", "ofertas"]
 
 
+def _pipeline_kwargs(
+    settings: Settings,
+    kind: ContractKind,
+    shadow_baseline_required: bool,
+) -> tuple[dict[str, Any], InMemoryRunRepository]:
+    contract_path = (
+        settings.factura_contract_path if kind == "factura"
+        else settings.ofertas_contract_path
+    )
+    contract = load_contract_yaml(contract_path.read_text())
+    secrets = EnvSecrets({settings.tenant_slug: settings.hmac_key.encode()})
+    repository = InMemoryRunRepository()
+    if kind == "ofertas":
+        registry_path = settings.artifact_dir / "registry" / "ofertas.jsonl"
+        registry_store: Any = FileSystemRegistryStore(registry_path)
+    else:
+        registry_store = InMemoryRegistryStore()
+    kwargs: dict[str, Any] = {
+        "contract": contract,
+        "repository": repository,
+        "storage": InMemoryStorage(),
+        "secrets": secrets,
+        "emitter": StructLogEmitter(),
+        "registry_store": registry_store,
+        "config": PipelineConfig(
+            tenant_slug=settings.tenant_slug,
+            shadow_baseline_required=shadow_baseline_required,
+        ),
+    }
+    return kwargs, repository
+
+
 def build_pipeline(
     settings: Settings,
     kind: ContractKind,
     *,
     shadow_baseline_required: bool = False,
 ) -> tuple[SyncPipeline, InMemoryRunRepository]:
-    contract_path = (
-        settings.factura_contract_path if kind == "factura"
-        else settings.ofertas_contract_path
-    )
-    contract = load_contract_yaml(contract_path.read_text())
+    kwargs, repository = _pipeline_kwargs(settings, kind, shadow_baseline_required)
+    return SyncPipeline(**kwargs), repository
 
-    secrets = EnvSecrets({settings.tenant_slug: settings.hmac_key.encode()})
-    repository = InMemoryRunRepository()
-    if kind == "ofertas":
-        registry_path = settings.artifact_dir / "registry" / "ofertas.jsonl"
-        registry_store = FileSystemRegistryStore(registry_path)
-    else:
-        registry_store = InMemoryRegistryStore()
-    pipeline = SyncPipeline(
-        contract=contract,
-        repository=repository,
-        storage=InMemoryStorage(),
-        secrets=secrets,
-        emitter=StructLogEmitter(),
-        registry_store=registry_store,
-        config=PipelineConfig(
-            tenant_slug=settings.tenant_slug,
-            shadow_baseline_required=shadow_baseline_required,
-        ),
-    )
-    return pipeline, repository
+
+def build_async_pipeline(
+    settings: Settings,
+    kind: ContractKind,
+    *,
+    shadow_baseline_required: bool = False,
+) -> tuple[Pipeline, InMemoryRunRepository]:
+    kwargs, repository = _pipeline_kwargs(settings, kind, shadow_baseline_required)
+    return Pipeline(**kwargs), repository
 
 
 def dump_state(

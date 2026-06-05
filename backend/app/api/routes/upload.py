@@ -10,7 +10,7 @@ from motivs_core import Verdict
 from pydantic import BaseModel
 
 from backend.app.factura.extractor import ExtractResult, extract_factura
-from backend.app.motivs.factory import build_pipeline, dump_state
+from backend.app.motivs.factory import build_async_pipeline, dump_state
 
 
 router = APIRouter(prefix="/api", tags=["upload"])
@@ -73,9 +73,9 @@ async def upload(request: Request, file: UploadFile = File(...)) -> UploadRespon
         raise HTTPException(status_code=422, detail=f"Could not parse the bill: {exc}") from exc
 
     settings = request.app.state.settings
-    pipeline, repository = build_pipeline(settings, kind="factura", shadow_baseline_required=False)
+    pipeline, repository = build_async_pipeline(settings, kind="factura", shadow_baseline_required=False)
     csv_bytes = _record_to_csv(extract.record)
-    result = pipeline.run(file_bytes=csv_bytes, file_name=file.filename + ".csv")
+    result = await pipeline.run(file_bytes=csv_bytes, file_name=file.filename + ".csv")
     dump_state(repository, settings, kind="factura")
 
     if result.verdict == Verdict.QUARANTINED:
