@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     artifact_dir: Path = BACKEND_ROOT / "artifacts"
     upload_dir: Path = BACKEND_ROOT / ".uploads"
 
+    motivs_runs_path: Path = BACKEND_ROOT / "artifacts" / "motivs_runs.jsonl"
+    motivs_summary_path: Path = BACKEND_ROOT / "artifacts" / "motivs_summary.json"
+    motivs_decisions_path: Path = BACKEND_ROOT / "artifacts" / "motivs_decisions.jsonl"
+
     tenant_slug: str = Field(default="factura-es", alias="MOTIVS_TENANT_SLUG")
     hmac_key: str = Field(default="dev-only-replace-in-prod", alias="MOTIVS_HMAC_KEY")
 
