@@ -11,6 +11,7 @@ import pdfplumber
 
 _EUR_RE = re.compile(r"([0-9]+(?:[.,][0-9]+)?)")
 _DATE_RE = re.compile(r"Fecha generaci[oó]n:\s*(\d{1,2})/(\d{1,2})/(\d{4})")
+_CID_RE = re.compile(r"\(cid:\d+\)")
 
 
 def parse_cnmc_pdf(pdf_bytes: bytes) -> list[dict[str, Any]]:
@@ -22,13 +23,14 @@ def parse_cnmc_pdf(pdf_bytes: bytes) -> list[dict[str, Any]]:
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
         for page in pdf.pages:
             for table in page.extract_tables() or []:
-                if not table or len(table) < 2:
-                    continue
-                section = _detect_section(table[0])
+                section = _detect_section(table)
                 if section == "unknown":
                     continue
-                for raw_row in table[1:]:
-                    record = _row_to_oferta(raw_row, section, snapshot_date)
+                for raw_row in table:
+                    cleaned = [_clean(c or "") for c in raw_row]
+                    if _is_header_row(cleaned):
+                        continue
+                    record = _row_to_oferta(cleaned, section, snapshot_date)
                     if record and record["offer_id"] not in seen_ids:
                         seen_ids.add(record["offer_id"])
                         offers.append(record)
@@ -38,7 +40,7 @@ def parse_cnmc_pdf(pdf_bytes: bytes) -> list[dict[str, Any]]:
 def _extract_snapshot_date(pdf_bytes: bytes) -> date | None:
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
         for page in reversed(pdf.pages):
-            text = page.extract_text() or ""
+            text = _CID_RE.sub("", page.extract_text() or "")
             match = _DATE_RE.search(text)
             if match:
                 day, month, year = (int(g) for g in match.groups())
@@ -46,21 +48,29 @@ def _extract_snapshot_date(pdf_bytes: bytes) -> date | None:
     return None
 
 
-def _detect_section(header_row: list[str | None]) -> str:
-    joined = " ".join(_clean(c or "") for c in header_row).lower()
-    if "tipo" in joined and "tarifa" in joined:
-        return "mercado_libre"
-    if "importe facturado" in joined:
+def _detect_section(table: list[list[str | None]]) -> str:
+    if not table:
+        return "unknown"
+    cols = max(len(row) for row in table)
+    if cols == 7:
         return "pvpc"
+    if cols == 9:
+        return "mercado_libre"
     return "unknown"
 
 
+def _is_header_row(row: list[str]) -> bool:
+    joined = " ".join(row).lower()
+    if "€" in joined:
+        return False
+    return "comercializador" in joined or ("tipo" in joined and "tarifa" in joined) or "importe" in joined
+
+
 def _row_to_oferta(
-    raw_row: list[str | None],
+    row: list[str],
     section: str,
     snapshot_date: date | None,
 ) -> dict[str, Any] | None:
-    row = [_clean(c or "") for c in raw_row]
     if not any(row):
         return None
 
@@ -97,7 +107,8 @@ def _row_to_oferta(
 
 
 def _clean(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
+    no_cid = _CID_RE.sub("", text)
+    return re.sub(r"\s+", " ", no_cid).strip()
 
 
 def _offer_id(*parts: str) -> str:
