@@ -80,33 +80,37 @@ h2 { font-size: 20px; line-height: 1.3; margin: 0 0 12px; letter-spacing: -0.01e
 .lead { color: var(--dim); font-size: 17px; margin: 0 0 24px; }
 
 .verified {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background: #eaf8f0;
   border: 1px solid #b8e2c7;
-  border-radius: var(--radius);
-  padding: 12px 16px;
+  border-radius: 999px;
+  padding: 6px 14px 6px 8px;
   margin: 0 0 28px;
+  text-decoration: none;
+  color: #114a2b;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s;
 }
-.verified.compact { margin: 24px 0 16px; padding: 10px 14px; }
+.verified.verified-link { cursor: pointer; }
+.verified.verified-link:hover { background: #d5efde; border-color: #88c8a0; }
+.verified.compact { margin: 24px 0 16px; }
+.verified-cta { letter-spacing: 0.01em; }
 .verified-check {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
   background: var(--success);
   color: #fff;
   font-weight: 700;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 12px;
 }
-.verified.compact .verified-check { width: 24px; height: 24px; font-size: 13px; }
-.verified-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.verified-title { font-weight: 600; font-size: 14px; color: #114a2b; }
-.verified-sub { font-size: 13px; color: #2d5c40; line-height: 1.4; }
 
 #upload-form { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
 
