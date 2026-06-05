@@ -4,10 +4,12 @@ import logging
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import ORJSONResponse
+from fastapi.responses import FileResponse, ORJSONResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
@@ -18,6 +20,9 @@ from backend.app.core.config import Settings, get_settings
 from backend.app.core.logging import configure_logging
 from backend.app.offers.loader import OffersLoader
 from backend.app.services.ttl_cache import TTLCache
+
+
+_FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +59,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(health_router)
     app.include_router(upload_router)
     app.include_router(result_router)
+
+    if _FRONTEND_DIR.is_dir():
+        app.mount("/static", StaticFiles(directory=_FRONTEND_DIR), name="static")
+
+        @app.get("/", include_in_schema=False)
+        async def index() -> FileResponse:
+            return FileResponse(_FRONTEND_DIR / "index.html")
+
     return app
 
 
