@@ -14,8 +14,6 @@ const els = {
   stepMask: document.getElementById("step-mask"),
   stepPipeline: document.getElementById("step-pipeline"),
   stepRank: document.getElementById("step-rank"),
-  maskingDropped: document.getElementById("masking-dropped"),
-  maskingHashed: document.getElementById("masking-hashed"),
   profileGrid: document.getElementById("profile-grid"),
   defaultedNote: document.getElementById("defaulted-note"),
   cVerde: document.getElementById("c-verde"),
@@ -170,29 +168,11 @@ async function loadResult() {
 }
 
 function renderResult(data) {
-  renderChips(els.maskingDropped, data.masking.dropped);
-  renderChips(els.maskingHashed, data.masking.hashed);
   renderProfile(data.profile_summary, data.extraction);
   els.userTotal.textContent = data.user_total_eur
     ? `· tu factura: ${formatEur(data.user_total_eur)}`
     : "";
   renderOffers(data.ranked_offers);
-}
-
-function renderChips(container, values) {
-  container.innerHTML = "";
-  if (!values || values.length === 0) {
-    const li = document.createElement("li");
-    li.className = "empty";
-    li.textContent = "nada";
-    container.appendChild(li);
-    return;
-  }
-  for (const v of values) {
-    const li = document.createElement("li");
-    li.textContent = v;
-    container.appendChild(li);
-  }
 }
 
 function renderProfile(profile, extraction) {
