@@ -13,6 +13,7 @@ from motivs_core.config import PipelineConfig
 
 from backend.app.core.config import Settings
 from backend.app.motivs.emitter import StructLogEmitter
+from backend.app.motivs.registry_fs import FileSystemRegistryStore
 
 
 ContractKind = Literal["factura", "ofertas"]
@@ -32,13 +33,18 @@ def build_pipeline(
 
     secrets = EnvSecrets({settings.tenant_slug: settings.hmac_key.encode()})
     repository = InMemoryRunRepository()
+    if kind == "ofertas":
+        registry_path = settings.artifact_dir / "registry" / "ofertas.jsonl"
+        registry_store = FileSystemRegistryStore(registry_path)
+    else:
+        registry_store = InMemoryRegistryStore()
     pipeline = SyncPipeline(
         contract=contract,
         repository=repository,
         storage=InMemoryStorage(),
         secrets=secrets,
         emitter=StructLogEmitter(),
-        registry_store=InMemoryRegistryStore(),
+        registry_store=registry_store,
         config=PipelineConfig(
             tenant_slug=settings.tenant_slug,
             shadow_baseline_required=shadow_baseline_required,
