@@ -13,7 +13,7 @@ from motivs_core import Verdict
 from backend.app.cnmc.parser import parse_cnmc_pdf
 from backend.app.core.config import get_settings
 from backend.app.core.logging import configure_logging
-from backend.app.motivs.factory import build_pipeline
+from backend.app.motivs.factory import build_pipeline, dump_state
 
 
 CONTRACT_FIELDS = (
@@ -63,12 +63,14 @@ def main() -> int:
     records = _fill_missing_snapshot_date(records)
     csv_bytes = _records_to_csv(records)
 
-    pipeline, _ = build_pipeline(settings, kind="ofertas", shadow_baseline_required=False)
+    pipeline, repository = build_pipeline(settings, kind="ofertas", shadow_baseline_required=False)
     result = pipeline.run(file_bytes=csv_bytes, file_name=args.snapshot.name + ".csv")
     logger.info(
         "pipeline_result",
         extra={"verdict": result.verdict.value, "run_id": result.run_id},
     )
+    summary = dump_state(repository, settings, kind="ofertas")
+    logger.info("motivs_summary", extra=summary)
 
     if result.verdict == Verdict.DELIVERED:
         rows = result.output_rows or []
