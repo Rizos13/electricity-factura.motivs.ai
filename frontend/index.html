@@ -10,14 +10,20 @@
   <header class="top">
     <div class="wrap">
       <a href="/" class="brand">electricity-factura<span class="dim">.motivs.ai</span></a>
-      <nav><a href="/static/about.html">Cómo funciona</a></nav>
+      <nav class="nav-right">
+        <a href="/static/about.html" data-i18n="nav_about">Cómo funciona</a>
+        <div class="lang-toggle" role="group" aria-label="language">
+          <button type="button" data-lang-btn="es">ES</button>
+          <button type="button" data-lang-btn="en">EN</button>
+        </div>
+      </nav>
     </div>
   </header>
 
   <main class="wrap">
     <section id="upload-view">
-      <h1>Sube tu factura, te decimos a qué tarifa pasarte.</h1>
-      <p class="lead">
+      <h1 data-i18n="hero_title">Sube tu factura, te decimos a qué tarifa pasarte.</h1>
+      <p class="lead" data-i18n="hero_lead">
         Compara tu factura con todas las ofertas del comparador oficial de la CNMC.
         Sin cuenta, sin guardar nada, sin compartir tus datos personales.
       </p>
@@ -25,8 +31,8 @@
       <div class="verified">
         <span class="verified-check" aria-hidden="true">✓</span>
         <div class="verified-text">
-          <div class="verified-title">Verificado por Motivs SRE</div>
-          <div class="verified-sub">Privacidad por diseño, nada se guarda, datos verificados del comparador oficial CNMC.</div>
+          <div class="verified-title" data-i18n="verified_title">Verificado por Motivs SRE</div>
+          <div class="verified-sub" data-i18n="verified_sub">Privacidad por diseño, nada se guarda, datos verificados del comparador oficial CNMC.</div>
         </div>
       </div>
 
@@ -34,68 +40,75 @@
         <label class="drop" id="drop">
           <input type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" hidden>
           <div class="drop-inner">
-            <div class="drop-title">Suelta aquí tu factura</div>
-            <div class="drop-sub">o haz clic para seleccionar PDF, JPG o PNG (máx 8 MB)</div>
+            <div class="drop-title" data-i18n="drop_title">Suelta aquí tu factura</div>
+            <div class="drop-sub" data-i18n="drop_sub">o haz clic para seleccionar PDF, JPG o PNG (máx 8 MB)</div>
             <div id="file-name" class="file-name"></div>
           </div>
         </label>
-        <button id="submit" type="submit" disabled>Comparar</button>
+        <button id="submit" type="submit" disabled data-i18n="submit_btn">Comparar</button>
       </form>
 
       <p id="error" class="error" hidden></p>
     </section>
 
     <section id="loading-view" hidden>
-      <h2>Procesando tu factura</h2>
+      <h2 data-i18n="loading_title">Procesando tu factura</h2>
       <ol class="steps">
-        <li id="step-extract" class="active">Extrayendo campos del documento</li>
-        <li id="step-mask">Anonimizando datos personales</li>
-        <li id="step-pipeline">Ejecutando gateway de seguridad SRE</li>
-        <li id="step-rank">Comparando con ofertas de la CNMC</li>
+        <li id="step-extract" class="active" data-i18n="step_extract">Extrayendo campos del documento</li>
+        <li id="step-mask" data-i18n="step_mask">Anonimizando datos personales</li>
+        <li id="step-pipeline" data-i18n="step_pipeline">Ejecutando gateway de seguridad SRE</li>
+        <li id="step-rank" data-i18n="step_rank">Comparando con ofertas de la CNMC</li>
       </ol>
     </section>
 
     <section id="result-view" hidden>
       <div class="card profile-card">
-        <h2>Tu perfil (anonimizado)</h2>
+        <h2 data-i18n="profile_title">Tu perfil (anonimizado)</h2>
         <div id="profile-grid" class="profile-grid"></div>
         <p id="defaulted-note" class="defaulted-note" hidden></p>
       </div>
 
       <div class="card constraints-card">
-        <h2>Filtra a tu gusto</h2>
-        <label><input type="checkbox" id="c-verde"> Sólo energía verde</label>
-        <label><input type="checkbox" id="c-perm"> Sin permanencia</label>
-        <label><input type="checkbox" id="c-fijo"> Sólo precio fijo</label>
+        <h2 data-i18n="constraints_title">Filtra a tu gusto</h2>
+        <label><input type="checkbox" id="c-verde"> <span data-i18n="c_verde">Sólo energía verde</span></label>
+        <label><input type="checkbox" id="c-perm"> <span data-i18n="c_perm">Sin permanencia</span></label>
+        <label><input type="checkbox" id="c-fijo"> <span data-i18n="c_fijo">Sólo precio fijo</span></label>
       </div>
 
       <div class="verified compact">
         <span class="verified-check" aria-hidden="true">✓</span>
         <div class="verified-text">
-          <div class="verified-title">Catálogo verificado por Motivs SRE</div>
-          <div class="verified-sub">Datos del comparador oficial CNMC validados por el gateway de seguridad.</div>
+          <div class="verified-title" data-i18n="catalog_verified_title">Catálogo verificado por Motivs SRE</div>
+          <div class="verified-sub" data-i18n="catalog_verified_sub">Datos del comparador oficial CNMC validados por el gateway de seguridad.</div>
         </div>
       </div>
 
-      <h2 class="ranking-title">Top ofertas para tu perfil <span id="user-total" class="dim"></span></h2>
-      <p class="ranking-note">
+      <h2 class="ranking-title">
+        <span data-i18n="ranking_title">Top ofertas para tu perfil</span>
+        <span id="user-total" class="dim"></span>
+      </h2>
+      <p class="ranking-note" data-i18n="ranking_note">
         Cifras estimadas a partir del perfil medio del comparador CNMC. Tu ahorro real depende de tu consumo.
       </p>
       <div id="offers-list" class="offers-list"></div>
 
       <p class="actions">
-        <a href="/">Subir otra factura</a>
+        <a href="/" data-i18n="upload_another">Subir otra factura</a>
       </p>
     </section>
   </main>
 
   <footer class="foot">
     <div class="wrap">
-      <span>Datos: <a href="https://comparador.cnmc.gob.es/" target="_blank" rel="noopener">comparador CNMC</a>.</span>
-      <span>Sin cuenta, sin historial, sin cookies de tracking.</span>
+      <span>
+        <span data-i18n="foot_data">Datos:</span>
+        <a href="https://comparador.cnmc.gob.es/" target="_blank" rel="noopener" data-i18n="foot_data_link">comparador CNMC</a>.
+      </span>
+      <span data-i18n="foot_no_state">Sin cuenta, sin historial, sin cookies de tracking.</span>
     </div>
   </footer>
 
+  <script src="/static/i18n.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>
