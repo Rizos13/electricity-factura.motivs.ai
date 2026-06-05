@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>electricity-factura.motivs.ai</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a href="/" class="brand">electricity-factura<span class="dim">.motivs.ai</span></a>
+      <nav><a href="/static/about.html">Cómo funciona</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="upload-view">
+      <h1>Sube tu factura, te decimos a qué tarifa pasarte.</h1>
+      <p class="lead">
+        Compara tu factura con todas las ofertas del comparador oficial de la CNMC.
+        Sin cuenta, sin guardar nada, sin compartir tus datos personales.
+      </p>
+
+      <div class="privacy">
+        <strong>Privacidad por diseño.</strong>
+        Tu nombre, dirección, CUPS, NIF y número de factura se eliminan o se anonimizan
+        en nuestro gateway de seguridad antes de cualquier análisis.
+        Nada se guarda más de 30 minutos.
+      </div>
+
+      <form id="upload-form">
+        <label class="drop" id="drop">
+          <input type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.webp" hidden>
+          <div class="drop-inner">
+            <div class="drop-title">Suelta aquí tu factura</div>
+            <div class="drop-sub">o haz clic para seleccionar PDF, JPG o PNG (máx 8 MB)</div>
+            <div id="file-name" class="file-name"></div>
+          </div>
+        </label>
+        <button id="submit" type="submit" disabled>Comparar</button>
+      </form>
+
+      <p id="error" class="error" hidden></p>
+    </section>
+
+    <section id="loading-view" hidden>
+      <h2>Procesando tu factura</h2>
+      <ol class="steps">
+        <li id="step-extract" class="active">Extrayendo campos del documento</li>
+        <li id="step-mask">Anonimizando datos personales</li>
+        <li id="step-pipeline">Ejecutando gateway de seguridad SRE</li>
+        <li id="step-rank">Comparando con ofertas de la CNMC</li>
+      </ol>
+    </section>
+
+    <section id="result-view" hidden>
+      <div class="card masking-card">
+        <h2>Lo que hicimos con tus datos</h2>
+        <div class="masking-grid">
+          <div>
+            <div class="masking-label">Campos eliminados</div>
+            <ul id="masking-dropped" class="chip-list"></ul>
+          </div>
+          <div>
+            <div class="masking-label">Campos anonimizados (HMAC)</div>
+            <ul id="masking-hashed" class="chip-list"></ul>
+          </div>
+        </div>
+        <p class="masking-note">
+          Estos campos nunca llegan al motor de comparación, ni al log, ni se guardan.
+        </p>
+      </div>
+
+      <div class="card profile-card">
+        <h2>Tu perfil (anonimizado)</h2>
+        <div id="profile-grid" class="profile-grid"></div>
+        <p id="defaulted-note" class="defaulted-note" hidden></p>
+      </div>
+
+      <div class="card constraints-card">
+        <h2>Filtra a tu gusto</h2>
+        <label><input type="checkbox" id="c-verde"> Sólo energía verde</label>
+        <label><input type="checkbox" id="c-perm"> Sin permanencia</label>
+        <label><input type="checkbox" id="c-fijo"> Sólo precio fijo</label>
+      </div>
+
+      <h2 class="ranking-title">Top ofertas para tu perfil <span id="user-total" class="dim"></span></h2>
+      <p class="ranking-note">
+        Cifras estimadas a partir del perfil medio del comparador CNMC. Tu ahorro real depende de tu consumo.
+      </p>
+      <div id="offers-list" class="offers-list"></div>
+
+      <p class="actions">
+        <a href="/">Subir otra factura</a>
+      </p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>Datos: <a href="https://comparador.cnmc.gob.es/" target="_blank" rel="noopener">comparador CNMC</a>.</span>
+      <span>Sin cuenta, sin historial, sin cookies de tracking.</span>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
