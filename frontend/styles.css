@@ -134,7 +134,49 @@ a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-under
   color: #fff;
 }
 
-main { padding: 64px 0 96px; }
+main { padding: 96px 0 96px; }
+#upload-view {
+  min-height: calc(100vh - 60px - 100px - 192px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.how-mini {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 56px;
+}
+.how-step {
+  background: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+}
+.how-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--yellow-fg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  border: 1px solid var(--yellow-edge);
+}
+.how-step:nth-child(2) .how-num { background: var(--blue); color: var(--blue-fg); border-color: var(--blue-edge); }
+.how-step:nth-child(3) .how-num { background: var(--green); color: var(--green-fg); border-color: var(--green-edge); }
+.how-text { color: var(--fg); font-size: 13.5px; line-height: 1.45; font-weight: 500; }
+@media (max-width: 600px) {
+  .how-mini { grid-template-columns: 1fr; gap: 8px; margin-top: 36px; }
+  #upload-view { min-height: auto; padding: 16px 0; }
+}
 
 h1 {
   font-size: 38px;
