@@ -17,7 +17,7 @@ spec:
       - name: cups
         type: string
         required: true
-        pattern: "^ES[0-9]{16}[A-Z]{2}[0-9A-Z]?$"
+        pattern: "^ES[0-9]{16}[A-Z]{2}[0-9A-Z]{0,2}$"
 
       - name: nif
         type: string
