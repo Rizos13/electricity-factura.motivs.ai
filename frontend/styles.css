@@ -33,8 +33,34 @@ a:hover { text-decoration-thickness: 2px; }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; }
 .brand { font-weight: 700; text-decoration: none; font-size: 18px; }
 .brand .dim { color: var(--dim); font-weight: 400; }
+.nav-right { display: flex; align-items: center; gap: 16px; }
 nav a { color: var(--dim); text-decoration: none; font-size: 14px; }
 nav a:hover { color: var(--fg); }
+
+.lang-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--card);
+}
+.lang-toggle button {
+  background: transparent;
+  border: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border-radius: 0;
+}
+.lang-toggle button:hover { color: var(--fg); }
+.lang-toggle button.active {
+  background: var(--accent);
+  color: var(--accent-text);
+}
 
 main { padding: 40px 0 80px; }
 
