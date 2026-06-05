@@ -1,6 +1,6 @@
 # Motivs Electricity Factura
 
-`factura.motivs.ai` - Spain electricity contract intelligence.
+`electricity-factura.motivs.ai` - Spain electricity contract intelligence.
 
 A user uploads their electricity bill (PDF). The service masks PII at the
 ingest gate, extracts a structured consumption profile, and returns a
