@@ -58,12 +58,12 @@ spec:
       - name: penalizacion
         type: string
         required: true
-        allowed_values: [si, no]
+        allowed_values: ["si", "no"]
 
       - name: verde
         type: string
         required: true
-        allowed_values: [si, no]
+        allowed_values: ["si", "no"]
 
       - name: snapshot_date
         type: date
