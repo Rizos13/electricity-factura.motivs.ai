@@ -31,8 +31,19 @@ a:hover { text-decoration-thickness: 2px; }
   padding: 18px 0;
 }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; }
-.brand { font-weight: 700; text-decoration: none; font-size: 18px; }
-.brand .dim { color: var(--dim); font-weight: 400; }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.brand a { text-decoration: none; color: var(--fg); }
+.brand a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.brand-parent { color: var(--fg); }
+.brand-sep { color: var(--dim); font-weight: 400; }
+.brand-product { color: var(--dim); font-weight: 600; }
+.brand-product:hover { color: var(--fg); }
 .nav-right { display: flex; align-items: center; gap: 16px; }
 nav a { color: var(--dim); text-decoration: none; font-size: 14px; }
 nav a:hover { color: var(--fg); }
