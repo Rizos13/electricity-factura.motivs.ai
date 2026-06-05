@@ -1,11 +1,12 @@
 const I18N_DICT = {
   es: {
+    product_name: "Tu Luz",
+    page_title: "Tu Luz · Motivs",
+    page_title_about: "Cómo funciona · Tu Luz · Motivs",
     nav_about: "Cómo funciona",
     nav_upload: "Subir factura",
-    hero_title: "Sube tu factura, te decimos a qué tarifa pasarte.",
-    hero_lead: "Compara tu factura con todas las ofertas del comparador oficial de la CNMC. Sin cuenta, sin guardar nada, sin compartir tus datos personales.",
-    verified_title: "Verificado por Motivs SRE",
-    verified_sub: "Privacidad por diseño, nada se guarda, datos verificados del comparador oficial CNMC.",
+    hero_title: "Encuentra tu tarifa ideal.",
+    verified_cta: "Get verified",
     drop_title: "Suelta aquí tu factura",
     drop_sub: "o haz clic para seleccionar PDF, JPG o PNG (máx 8 MB)",
     submit_btn: "Comparar",
@@ -27,8 +28,7 @@ const I18N_DICT = {
     foot_data: "Datos:",
     foot_data_link: "comparador CNMC",
     foot_no_state: "Sin cuenta, sin historial, sin cookies de tracking.",
-    foot_built_by: "Hecho con",
-    foot_motivs_link: "Motivs SRE",
+    foot_motivs_about: "Sobre Motivs.ai",
     about_h_motivs: "Sobre Motivs",
     about_p_motivs: "Motivs es la empresa detrás del gateway de seguridad SRE que protege este servicio. Construimos infraestructura para que cualquier producto que toque datos sensibles pueda demostrarlo, no sólo prometerlo. Más en motivs.ai.",
     about_p_motivs_link: "motivs.ai",
@@ -74,12 +74,13 @@ const I18N_DICT = {
     about_p_numbers_2: "Para una simulación exacta, después de elegir una oferta visita el comparador de la CNMC directamente con tu consumo.",
   },
   en: {
+    product_name: "Your Electricity",
+    page_title: "Your Electricity · Motivs",
+    page_title_about: "How it works · Your Electricity · Motivs",
     nav_about: "How it works",
     nav_upload: "Upload bill",
-    hero_title: "Upload your bill, we'll tell you which tariff to switch to.",
-    hero_lead: "Compare your bill against every offer in the official CNMC comparator. No account, nothing stored, nothing shared.",
-    verified_title: "Verified by Motivs SRE",
-    verified_sub: "Privacy by design, nothing stored, verified data from the official CNMC comparator.",
+    hero_title: "Find your ideal tariff.",
+    verified_cta: "Get verified",
     drop_title: "Drop your bill here",
     drop_sub: "or click to choose PDF, JPG, or PNG (max 8 MB)",
     submit_btn: "Compare",
@@ -101,8 +102,7 @@ const I18N_DICT = {
     foot_data: "Data:",
     foot_data_link: "CNMC comparator",
     foot_no_state: "No account, no history, no tracking cookies.",
-    foot_built_by: "Built with",
-    foot_motivs_link: "Motivs SRE",
+    foot_motivs_about: "About Motivs.ai",
     about_h_motivs: "About Motivs",
     about_p_motivs: "Motivs is the company behind the SRE security gateway that protects this service. We build infrastructure so any product that touches sensitive data can prove it, not just promise it. More at motivs.ai.",
     about_p_motivs_link: "motivs.ai",
@@ -166,6 +166,8 @@ const I18N = {
     root.querySelectorAll("[data-i18n]").forEach(el => {
       el.textContent = this.t(el.getAttribute("data-i18n"));
     });
+    const titleKey = document.documentElement.getAttribute("data-i18n-title");
+    if (titleKey) document.title = this.t(titleKey);
   },
   setLang(lang) {
     if (!I18N_DICT[lang] || lang === this.lang) return;
