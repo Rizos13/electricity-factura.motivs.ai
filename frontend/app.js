@@ -175,9 +175,13 @@ async function loadResult() {
 
 function renderResult(data) {
   renderProfile(data.profile_summary, data.extraction);
-  els.userTotal.textContent = data.user_total_eur
-    ? `· ${I18N.t("your_bill")}: ${formatEur(data.user_total_eur)}`
-    : "";
+  if (data.user_total_eur) {
+    const days = data.user_period_days || 30;
+    const monthly = data.user_monthly_eur || data.user_total_eur;
+    els.userTotal.textContent = `· ${I18N.t("your_bill")}: ${formatEur(data.user_total_eur)} (${days} ${I18N.t("days_short")}, ≈${formatEur(monthly)}${I18N.t("monthly_suffix")})`;
+  } else {
+    els.userTotal.textContent = "";
+  }
   renderRecommendation(data.recommendation);
   renderDisclaimer(data);
   renderOffers(data.ranked_offers);
