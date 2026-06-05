@@ -50,13 +50,15 @@ async def result(
 
     masked = cached["masked_profile"]
     user_total = float(cached.get("user_total_eur") or 0.0)
+    period_days = float(masked.get("periodo_facturacion_dias") or 30)
+    user_monthly = round(user_total * (30.0 / period_days), 2) if period_days > 0 else user_total
     user_annual_kwh = _user_annual_kwh(masked)
     scaling_factor = (
         user_annual_kwh / _CNMC_DEFAULT_ANNUAL_KWH if user_annual_kwh > 0 else 1.0
     )
 
-    ranked = rank_offers(offers, user_total, Constraints(only_verde=only_verde), top_n)
-    rendered = [_render_offer(r, scaling_factor, user_total) for r in ranked]
+    ranked = rank_offers(offers, user_monthly, Constraints(only_verde=only_verde), top_n)
+    rendered = [_render_offer(r, scaling_factor, user_monthly) for r in ranked]
     recommendation = _pick_recommendation(rendered)
 
     extracted_set = set(cached.get("extracted_fields") or [])
@@ -65,6 +67,8 @@ async def result(
         "run_id": run_id,
         "filename": cached.get("filename"),
         "user_total_eur": user_total,
+        "user_monthly_eur": user_monthly,
+        "user_period_days": int(period_days),
         "user_annual_kwh": round(user_annual_kwh, 0) if user_annual_kwh else None,
         "cnmc_default_annual_kwh": _CNMC_DEFAULT_ANNUAL_KWH,
         "cnmc_snapshot_date": snapshot_date,
