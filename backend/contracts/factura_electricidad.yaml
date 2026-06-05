@@ -1,0 +1,146 @@
+apiVersion: motivs.io/v1
+kind: DeliveryContract
+metadata:
+  tenant_id: factura-es
+  client_name: electricity-factura.motivs.ai user documents
+  version: "1.0"
+
+spec:
+  source:
+    type: file_upload
+    expected:
+      size_kb: { min: 5, max: 5000 }
+      rows:    { min: 1, max: 12 }
+
+  schema:
+    fields:
+      - name: cups
+        type: string
+        required: true
+        pattern: "^ES[0-9]{16}[A-Z]{2}[0-9A-Z]?$"
+
+      - name: nif
+        type: string
+        required: false
+
+      - name: nombre_titular
+        type: string
+        required: false
+
+      - name: direccion_suministro
+        type: string
+        required: false
+
+      - name: iban
+        type: string
+        required: false
+
+      - name: num_factura
+        type: string
+        required: false
+
+      - name: num_contrato
+        type: string
+        required: false
+
+      - name: comercializadora_actual
+        type: string
+        required: true
+
+      - name: distribuidora
+        type: string
+        required: false
+
+      - name: codigo_postal
+        type: string
+        required: true
+        pattern: "^[0-9]{5}$"
+
+      - name: region
+        type: string
+        required: true
+        allowed_values: [barcelona, girona, lleida, tarragona, other]
+
+      - name: tarifa_acceso
+        type: string
+        required: true
+        allowed_values: [2.0TD, 3.0TD, other]
+
+      - name: potencia_p1_kw
+        type: decimal
+        required: true
+        validation: { min: 0.1, max: 100 }
+
+      - name: potencia_p2_kw
+        type: decimal
+        required: false
+
+      - name: consumo_kwh_punta
+        type: decimal
+        required: true
+        validation: { min: 0, max: 50000 }
+
+      - name: consumo_kwh_llano
+        type: decimal
+        required: true
+        validation: { min: 0, max: 50000 }
+
+      - name: consumo_kwh_valle
+        type: decimal
+        required: true
+        validation: { min: 0, max: 50000 }
+
+      - name: precio_kwh_actual_p1
+        type: decimal
+        required: false
+
+      - name: precio_kwh_actual_p2
+        type: decimal
+        required: false
+
+      - name: precio_kwh_actual_p3
+        type: decimal
+        required: false
+
+      - name: termino_potencia_eur_dia
+        type: decimal
+        required: false
+
+      - name: permanencia_actual_meses
+        type: integer
+        required: false
+        validation: { min: 0, max: 60 }
+
+      - name: periodo_facturacion_dias
+        type: integer
+        required: true
+
+      - name: total_factura_eur
+        type: decimal
+        required: true
+
+      - name: ocr_text
+        type: string
+        required: false
+        max_length: 200000
+
+  transformations:
+    - type: hmac_tokenize
+      field: cups
+    - type: hmac_tokenize
+      field: nif
+    - type: hmac_tokenize
+      field: iban
+    - type: drop_field
+      field: nombre_titular
+    - type: drop_field
+      field: direccion_suministro
+    - type: drop_field
+      field: num_factura
+    - type: drop_field
+      field: num_contrato
+
+  delivery:
+    target: ephemeral_profile
+    format: csv
+    deadline: same_day
