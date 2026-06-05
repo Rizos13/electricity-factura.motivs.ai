@@ -67,10 +67,11 @@
 
       <div class="card constraints-card">
         <h2 data-i18n="constraints_title">Filtra a tu gusto</h2>
+        <label><input type="checkbox" id="c-marcas" checked> <span data-i18n="c_solo_marcas">Sólo marcas conocidas</span></label>
         <label><input type="checkbox" id="c-verde"> <span data-i18n="c_verde">Sólo energía verde</span></label>
-        <label><input type="checkbox" id="c-perm"> <span data-i18n="c_perm">Sin permanencia</span></label>
-        <label><input type="checkbox" id="c-fijo"> <span data-i18n="c_fijo">Sólo precio fijo</span></label>
       </div>
+
+      <div id="recommendation" class="recommendation" hidden></div>
 
       <a class="verified verified-link compact" href="/static/about.html">
         <span class="verified-check" aria-hidden="true">✓</span>

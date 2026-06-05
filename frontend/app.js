@@ -17,8 +17,8 @@ const els = {
   profileGrid: document.getElementById("profile-grid"),
   defaultedNote: document.getElementById("defaulted-note"),
   cVerde: document.getElementById("c-verde"),
-  cPerm: document.getElementById("c-perm"),
-  cFijo: document.getElementById("c-fijo"),
+  cMarcas: document.getElementById("c-marcas"),
+  recommendation: document.getElementById("recommendation"),
   userTotal: document.getElementById("user-total"),
   offersList: document.getElementById("offers-list"),
 };
@@ -137,7 +137,7 @@ els.form.addEventListener("submit", async (e) => {
   }
 });
 
-[els.cVerde, els.cPerm, els.cFijo].forEach(el => {
+[els.cVerde, els.cMarcas].forEach(el => {
   el.addEventListener("change", () => {
     if (activeRunId) loadResult();
   });
@@ -151,8 +151,7 @@ async function loadResult() {
   if (!activeRunId) return;
   const qs = new URLSearchParams({
     only_verde: els.cVerde.checked ? "true" : "false",
-    no_permanencia: els.cPerm.checked ? "true" : "false",
-    only_fijo: els.cFijo.checked ? "true" : "false",
+    solo_marcas_conocidas: els.cMarcas.checked ? "true" : "false",
     top_n: "10",
   });
   try {
@@ -178,7 +177,58 @@ function renderResult(data) {
   els.userTotal.textContent = data.user_total_eur
     ? `· ${I18N.t("your_bill")}: ${formatEur(data.user_total_eur)}`
     : "";
+  renderRecommendation(data.recommendation);
   renderOffers(data.ranked_offers);
+}
+
+function renderRecommendation(rec) {
+  els.recommendation.innerHTML = "";
+  if (!rec) {
+    els.recommendation.hidden = true;
+    return;
+  }
+  els.recommendation.hidden = false;
+
+  const title = document.createElement("div");
+  title.className = "rec-title";
+  title.textContent = I18N.t("recommendation_title");
+
+  const brand = document.createElement("div");
+  brand.className = "rec-brand";
+  brand.textContent = rec.comercializadora;
+
+  const oferta = document.createElement("div");
+  oferta.className = "rec-oferta";
+  oferta.textContent = rec.oferta || "";
+
+  const savings = document.createElement("div");
+  savings.className = "rec-savings";
+  const annual = rec.savings_annual_eur || 0;
+  if (annual > 0) {
+    savings.classList.add("pos");
+    savings.textContent = `${I18N.t("recommendation_save_year")}: ${formatEur(annual)}`;
+  } else if (annual < 0) {
+    savings.classList.add("neg");
+    savings.textContent = `${I18N.t("recommendation_more_year")}: ${formatEur(Math.abs(annual))}`;
+  }
+
+  const reason = document.createElement("div");
+  reason.className = "rec-reason";
+  reason.textContent = I18N.t(rec.rationale_key);
+
+  const cta = document.createElement("a");
+  cta.className = "rec-cta";
+  cta.href = rec.brand_url;
+  cta.target = "_blank";
+  cta.rel = "noopener";
+  cta.textContent = `${I18N.t("visit_site")} →`;
+
+  els.recommendation.appendChild(title);
+  els.recommendation.appendChild(brand);
+  if (rec.oferta) els.recommendation.appendChild(oferta);
+  els.recommendation.appendChild(savings);
+  els.recommendation.appendChild(reason);
+  els.recommendation.appendChild(cta);
 }
 
 function renderProfile(profile, extraction) {
@@ -239,10 +289,15 @@ function renderOffers(offers) {
     badges.className = "badges";
     appendBadge(badges, typeLabel(o.tipo_precio), typeClass(o.tipo_precio));
     if (o.verde === "si") appendBadge(badges, I18N.t("badge_verde"), "verde");
-    if (o.penalizacion === "si") appendBadge(badges, I18N.t("badge_permanencia"), "pen");
+    if (o.is_promotional) appendBadge(badges, I18N.t("promo_label"), "promo");
+
+    const commitment = document.createElement("div");
+    commitment.className = "oferta commitment";
+    commitment.textContent = I18N.t(o.commitment_key || "commitment_unknown");
 
     body.appendChild(comer);
     body.appendChild(oferta);
+    if (commitment.textContent) body.appendChild(commitment);
     body.appendChild(badges);
 
     const money = document.createElement("div");
@@ -263,6 +318,16 @@ function renderOffers(offers) {
     }
     money.appendChild(imp);
     money.appendChild(sav);
+
+    if (o.brand_url) {
+      const visit = document.createElement("a");
+      visit.className = "visit";
+      visit.href = o.brand_url;
+      visit.target = "_blank";
+      visit.rel = "noopener";
+      visit.textContent = `${I18N.t("visit_site")} →`;
+      money.appendChild(visit);
+    }
 
     card.appendChild(rank);
     card.appendChild(body);
