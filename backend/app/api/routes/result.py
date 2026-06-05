@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+from backend.app.offers.display import display_comercializadora
 from backend.app.ranker.rank import Constraints, rank_offers
 
 
@@ -76,7 +77,7 @@ async def result(
                 "rank": r.rank,
                 "importe_primera_factura_eur": r.importe_eur,
                 "savings_vs_user_eur": r.savings_vs_user_eur,
-                "comercializadora": r.offer.get("comercializadora"),
+                "comercializadora": display_comercializadora(r.offer.get("comercializadora")),
                 "oferta": r.offer.get("oferta"),
                 "tipo_precio": r.offer.get("tipo_precio"),
                 "verde": r.offer.get("verde"),
