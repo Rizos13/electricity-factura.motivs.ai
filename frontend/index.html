@@ -22,11 +22,12 @@
         Sin cuenta, sin guardar nada, sin compartir tus datos personales.
       </p>
 
-      <div class="privacy">
-        <strong>Privacidad por diseño.</strong>
-        Tu nombre, dirección, CUPS, NIF y número de factura se eliminan o se anonimizan
-        en nuestro gateway de seguridad antes de cualquier análisis.
-        Nada se guarda más de 30 minutos.
+      <div class="verified">
+        <span class="verified-check" aria-hidden="true">✓</span>
+        <div class="verified-text">
+          <div class="verified-title">Verificado por Motivs SRE</div>
+          <div class="verified-sub">Privacidad por diseño, nada se guarda, datos verificados del comparador oficial CNMC.</div>
+        </div>
       </div>
 
       <form id="upload-form">
@@ -83,6 +84,14 @@
         <label><input type="checkbox" id="c-verde"> Sólo energía verde</label>
         <label><input type="checkbox" id="c-perm"> Sin permanencia</label>
         <label><input type="checkbox" id="c-fijo"> Sólo precio fijo</label>
+      </div>
+
+      <div class="verified compact">
+        <span class="verified-check" aria-hidden="true">✓</span>
+        <div class="verified-text">
+          <div class="verified-title">Catálogo verificado por Motivs SRE</div>
+          <div class="verified-sub">Datos del comparador oficial CNMC validados por el gateway de seguridad.</div>
+        </div>
       </div>
 
       <h2 class="ranking-title">Top ofertas para tu perfil <span id="user-total" class="dim"></span></h2>
