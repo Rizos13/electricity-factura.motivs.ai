@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cómo funciona — electricity-factura.motivs.ai</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <a href="/" class="brand">electricity-factura<span class="dim">.motivs.ai</span></a>
+      <nav><a href="/">Subir factura</a></nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <h1>Cómo funciona</h1>
+
+    <div class="card">
+      <h2>De dónde vienen las tarifas</h2>
+      <p>
+        Todos los precios provienen del <strong>Comparador oficial de la CNMC</strong>
+        (Comisión Nacional de los Mercados y la Competencia), el regulador español.
+        El catálogo incluye unas 50 ofertas verificadas de más de 30 comercializadoras,
+        entre ellas Endesa, Iberdrola, Naturgy, Repsol, Octopus, TotalEnergies,
+        Holaluz, Imagina y otras.
+      </p>
+      <p>
+        No usamos comparadores comerciales ni datos pagados por las comercializadoras.
+        El ranking es <strong>determinístico</strong>: no hay LLM que decida qué oferta
+        mostrarte, sólo un cálculo público y reproducible.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Qué hacemos con tus datos</h2>
+      <p>
+        Tu factura pasa por nuestro <strong>gateway de seguridad SRE</strong> antes
+        de cualquier análisis. En ese paso:
+      </p>
+      <ul>
+        <li><strong>Eliminamos</strong> nombre, dirección, número de factura y número de contrato.</li>
+        <li><strong>Anonimizamos</strong> tu CUPS, NIF e IBAN con HMAC (hash irreversible).</li>
+        <li>Estos campos <strong>no llegan</strong> al motor de comparación, ni al log, ni se guardan.</li>
+      </ul>
+      <p>
+        El resto (consumo en kWh, potencia, tarifa de acceso) no es PII y sí se usa
+        para la comparación.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Sin cuenta, sin historial</h2>
+      <p>
+        No hay registro. No hay inicio de sesión. No guardamos tu perfil más allá de
+        <strong>30 minutos</strong> en memoria volátil. Si vuelves mañana, tendrás
+        que subir tu factura de nuevo, y eso es intencional.
+      </p>
+      <p>
+        Si necesitas un seguimiento histórico, este no es el servicio correcto.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Honestidad sobre las cifras</h2>
+      <p>
+        El comparador CNMC calcula el importe de cada oferta para un <em>perfil
+        medio de hogar</em>, no para tu consumo exacto. Por eso las cifras del
+        ranking son <strong>estimaciones</strong>: tu ahorro real depende de tu
+        consumo en kWh, tus periodos punta/llano/valle y tu potencia contratada.
+      </p>
+      <p>
+        Para una simulación exacta, después de elegir una oferta visita el
+        <a href="https://comparador.cnmc.gob.es/" target="_blank" rel="noopener">comparador
+        de la CNMC</a> directamente con tu consumo.
+      </p>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>Datos: <a href="https://comparador.cnmc.gob.es/" target="_blank" rel="noopener">comparador CNMC</a>.</span>
+      <span>Sin cuenta, sin historial, sin cookies de tracking.</span>
+    </div>
+  </footer>
+</body>
+</html>
