@@ -76,3 +76,63 @@ async def run_detail(run_id: str, request: Request) -> dict[str, Any]:
         if run.get("run_id") == run_id:
             return run
     raise HTTPException(status_code=404, detail="Run not found")
+
+
+@router.get("/snapshot-status", dependencies=[Depends(require_admin)])
+async def snapshot_status(request: Request) -> dict[str, Any]:
+    settings = request.app.state.settings
+    offers_path = settings.artifact_dir / "offers.jsonl"
+    if not offers_path.exists():
+        return {
+            "path": str(offers_path),
+            "exists": False,
+            "offers_count": 0,
+            "comercializadoras_count": 0,
+            "snapshot_date": None,
+            "file_mtime": None,
+        }
+    offers: list[dict[str, Any]] = []
+    with offers_path.open("r", encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.strip()
+            if line:
+                try:
+                    offers.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+    comercializadoras = {o.get("comercializadora") for o in offers if o.get("comercializadora")}
+    snapshot_dates = {o.get("snapshot_date") for o in offers if o.get("snapshot_date")}
+    return {
+        "path": str(offers_path),
+        "exists": True,
+        "offers_count": len(offers),
+        "comercializadoras_count": len(comercializadoras),
+        "snapshot_date": sorted(snapshot_dates)[-1] if snapshot_dates else None,
+        "file_mtime": offers_path.stat().st_mtime,
+    }
+
+
+@router.get("/registry", dependencies=[Depends(require_admin)])
+async def registry_view(
+    request: Request,
+    limit: int = Query(default=100, ge=1, le=1000),
+) -> dict[str, Any]:
+    settings = request.app.state.settings
+    registry_path = settings.artifact_dir / "registry" / "ofertas.jsonl"
+    if not registry_path.exists():
+        return {"path": str(registry_path), "exists": False, "total": 0, "patterns": []}
+    patterns: list[dict[str, Any]] = []
+    with registry_path.open("r", encoding="utf-8") as fh:
+        for raw in fh:
+            line = raw.strip()
+            if line:
+                try:
+                    patterns.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+    return {
+        "path": str(registry_path),
+        "exists": True,
+        "total": len(patterns),
+        "patterns": patterns[-limit:],
+    }
