@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 
+from backend.admin.routes import router as admin_router
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.logging import configure_logging
 
@@ -38,6 +39,7 @@ def create_admin_app(settings: Settings | None = None) -> FastAPI:
     async def healthz() -> dict[str, str]:
         return {"status": "ok", "service": "electricity-factura-admin"}
 
+    app.include_router(admin_router)
     return app
 
 
