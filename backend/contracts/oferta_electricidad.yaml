@@ -1,0 +1,94 @@
+apiVersion: motivs.io/v1
+kind: DeliveryContract
+metadata:
+  tenant_id: ofertas-es
+  client_name: electricity-factura.motivs.ai cnmc offers
+  version: "1.0"
+
+spec:
+  source:
+    type: scheduled_scrape
+    expected:
+      size_kb: { min: 1, max: 50 }
+      rows:    { min: 1, max: 200 }
+
+  schema:
+    fields:
+      - name: offer_id
+        type: string
+        required: true
+        unique: true
+        pattern: "^[a-z0-9_-]{4,128}$"
+
+      - name: comercializadora
+        type: string
+        required: true
+
+      - name: tarifa_acceso
+        type: string
+        required: true
+        allowed_values: [2.0TD, 3.0TD]
+
+      - name: tipo_precio
+        type: string
+        required: true
+        allowed_values: [fijo, indexado, pvpc]
+
+      - name: precio_kwh_p1
+        type: decimal
+        required: true
+
+      - name: precio_kwh_p2
+        type: decimal
+        required: false
+
+      - name: precio_kwh_p3
+        type: decimal
+        required: false
+
+      - name: termino_potencia_eur_kw_dia
+        type: decimal
+        required: true
+
+      - name: permanencia_meses
+        type: integer
+        required: true
+        validation: { min: 0, max: 60 }
+
+      - name: penalizacion_cancelacion_eur
+        type: decimal
+        required: false
+
+      - name: servicios_incluidos
+        type: string
+        required: false
+
+      - name: energia_verde
+        type: string
+        required: false
+        allowed_values: [si, no]
+
+      - name: regiones_disponibles
+        type: string
+        required: true
+
+      - name: url_contratacion
+        type: string
+        required: true
+        pattern: "^https?://.+"
+
+      - name: precio_actualizado_en
+        type: datetime
+        required: true
+
+  transformations:
+    - type: deduplicate
+      field: offer_id
+    - type: normalize_date
+      field: precio_actualizado_en
+      format: ISO8601
+
+  delivery:
+    target: lancedb_index
+    format: csv
+    deadline: same_day
