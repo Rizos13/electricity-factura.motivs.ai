@@ -106,9 +106,22 @@ def _row_to_oferta(
     }
 
 
+_WORDBREAK_FIXES = (
+    ("TOTALENERGIE S", "TOTALENERGIES"),
+    ("COMERCIALIZA DORA", "COMERCIALIZADORA"),
+    ("HIDROELECTRI CA", "HIDROELECTRICA"),
+    ("ELECTRI CIDAD", "ELECTRICIDAD"),
+    ("ENERG ÍA", "ENERGÍA"),
+    ("HCENERG ÍA", "HCENERGÍA"),
+)
+
+
 def _clean(text: str) -> str:
     no_cid = _CID_RE.sub("", text)
-    return re.sub(r"\s+", " ", no_cid).strip()
+    collapsed = re.sub(r"\s+", " ", no_cid).strip()
+    for broken, fixed in _WORDBREAK_FIXES:
+        collapsed = collapsed.replace(broken, fixed)
+    return collapsed
 
 
 def _offer_id(*parts: str) -> str:
