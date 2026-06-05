@@ -19,6 +19,7 @@ const els = {
   cVerde: document.getElementById("c-verde"),
   cMarcas: document.getElementById("c-marcas"),
   recommendation: document.getElementById("recommendation"),
+  disclaimer: document.getElementById("disclaimer"),
   userTotal: document.getElementById("user-total"),
   offersList: document.getElementById("offers-list"),
 };
@@ -178,7 +179,32 @@ function renderResult(data) {
     ? `· ${I18N.t("your_bill")}: ${formatEur(data.user_total_eur)}`
     : "";
   renderRecommendation(data.recommendation);
+  renderDisclaimer(data);
   renderOffers(data.ranked_offers);
+}
+
+function renderDisclaimer(data) {
+  const kwh = data.user_annual_kwh;
+  if (!kwh) {
+    els.disclaimer.hidden = true;
+    return;
+  }
+  els.disclaimer.hidden = false;
+  els.disclaimer.innerHTML = "";
+  const title = document.createElement("div");
+  title.className = "disclaimer-title";
+  title.textContent = I18N.t("disclaimer_title");
+  const body = document.createElement("div");
+  body.className = "disclaimer-body";
+  body.textContent = I18N.t("disclaimer_body").replace("{kwh}", Math.round(kwh));
+  els.disclaimer.appendChild(title);
+  els.disclaimer.appendChild(body);
+  if (data.cnmc_snapshot_date) {
+    const snap = document.createElement("div");
+    snap.className = "disclaimer-snap";
+    snap.textContent = `${I18N.t("snapshot_label")}: ${data.cnmc_snapshot_date}`;
+    els.disclaimer.appendChild(snap);
+  }
 }
 
 function renderRecommendation(rec) {
@@ -304,7 +330,7 @@ function renderOffers(offers) {
     money.className = "money";
     const imp = document.createElement("div");
     imp.className = "importe";
-    imp.textContent = formatEur(o.importe_primera_factura_eur);
+    imp.textContent = formatEur(o.importe_estimated_eur);
     const sav = document.createElement("div");
     sav.className = "savings";
     if (o.savings_vs_user_eur > 0) {
