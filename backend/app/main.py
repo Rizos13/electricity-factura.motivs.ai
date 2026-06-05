@@ -12,6 +12,7 @@ from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from backend.app.api.routes.health import router as health_router
+from backend.app.api.routes.upload import router as upload_router
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.logging import configure_logging
 from backend.app.offers.loader import OffersLoader
@@ -50,6 +51,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.middleware("http")(request_logging_middleware)
     app.include_router(health_router)
+    app.include_router(upload_router)
     return app
 
 
