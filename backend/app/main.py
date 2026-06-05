@@ -14,6 +14,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from backend.app.api.routes.health import router as health_router
 from backend.app.core.config import Settings, get_settings
 from backend.app.core.logging import configure_logging
+from backend.app.offers.loader import OffersLoader
+from backend.app.services.ttl_cache import TTLCache
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.settings = settings
+        app.state.profile_cache = TTLCache(default_ttl_seconds=settings.profile_redis_ttl)
+        app.state.offers_loader = OffersLoader(settings.artifact_dir / "offers.jsonl")
+        loaded = app.state.offers_loader.reload()
+        logger.info("offers_loaded", extra={"count": loaded})
         yield
 
     app = FastAPI(
