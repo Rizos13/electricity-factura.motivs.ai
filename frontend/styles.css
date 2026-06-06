@@ -409,6 +409,30 @@ button[type="submit"]:hover:not(:disabled) {
   color: var(--green-fg);
 }
 .rec-savings.neg { color: var(--muted-fg); }
+.rec-calc { margin-top: 6px; }
+.rec-calc-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted-fg);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.rec-calc-btn:hover { border-color: var(--green-deep); color: var(--fg); }
+.rec-calc-panel {
+  margin-top: 10px;
+  background: var(--bg);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.rec-calc-row { display: grid; grid-template-columns: 140px 1fr; gap: 10px; padding: 6px 0; border-top: 1px solid var(--hairline); }
+.rec-calc-row:first-child { border-top: 0; }
+.rec-calc-k { font-size: 11.5px; font-weight: 600; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 2px; }
+.rec-calc-v { font-size: 13px; color: var(--fg); white-space: pre-line; font-variant-numeric: tabular-nums; }
+.rec-calc-foot { font-size: 11.5px; color: var(--muted-fg); margin: 10px 0 0; }
 .rec-reason { color: var(--muted-fg); font-size: 13px; margin-top: 4px; }
 .rec-cta {
   align-self: start;
