@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -28,13 +28,13 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     api_prefix: str = "/api"
-    cors_origins: list[str] = Field(
+    cors_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: [
             "http://localhost:5173",
             "http://127.0.0.1:5173",
         ],
     )
-    trusted_hosts: list[str] = Field(default_factory=lambda: ["*"])
+    trusted_hosts: Annotated[list[str], NoDecode] = Field(default_factory=lambda: ["*"])
 
     artifact_dir: Path = BACKEND_ROOT / "artifacts"
     upload_dir: Path = BACKEND_ROOT / ".uploads"
@@ -55,7 +55,7 @@ class Settings(BaseSettings):
         alias="MOTIVS_OFERTAS_CONTRACT_PATH",
     )
 
-    regions: list[str] = Field(
+    regions: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: ["barcelona", "girona", "lleida", "tarragona"],
         alias="MOTIVS_REGIONS",
     )
