@@ -428,11 +428,18 @@ button[type="submit"]:hover:not(:disabled) {
   border-radius: var(--radius-sm);
   padding: 12px 14px;
 }
-.rec-calc-row { display: grid; grid-template-columns: 140px 1fr; gap: 10px; padding: 6px 0; border-top: 1px solid var(--hairline); }
-.rec-calc-row:first-child { border-top: 0; }
-.rec-calc-k { font-size: 11.5px; font-weight: 600; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 2px; }
-.rec-calc-v { font-size: 13px; color: var(--fg); white-space: pre-line; font-variant-numeric: tabular-nums; }
-.rec-calc-foot { font-size: 11.5px; color: var(--muted-fg); margin: 10px 0 0; }
+.rec-calc-group { margin-top: 12px; }
+.rec-calc-group:first-child { margin-top: 0; }
+.rec-calc-group-title { font-size: 11.5px; font-weight: 600; color: var(--muted-fg); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.rec-calc-line { display: grid; grid-template-columns: 110px 80px 1fr; gap: 8px; padding: 4px 0; font-size: 13px; color: var(--fg); align-items: baseline; }
+.rec-calc-line-label { color: var(--muted-fg); }
+.rec-calc-line-value { font-variant-numeric: tabular-nums; text-align: right; }
+.rec-calc-line-note { font-size: 11.5px; color: var(--muted-fg); }
+.rec-calc-total { border-top: 1px solid var(--hairline); margin-top: 4px; padding-top: 6px; font-weight: 600; }
+.rec-calc-total .rec-calc-line-label { color: var(--fg); }
+.rec-calc-save { background: var(--bg-soft); border-radius: var(--radius-sm); padding: 10px 12px; }
+.rec-calc-save-body { font-size: 13px; color: var(--fg); white-space: pre-line; font-variant-numeric: tabular-nums; }
+.rec-calc-foot { font-size: 11.5px; color: var(--muted-fg); margin: 12px 0 0; line-height: 1.45; }
 .rec-reason { color: var(--muted-fg); font-size: 13px; margin-top: 4px; }
 .rec-cta {
   align-self: start;
