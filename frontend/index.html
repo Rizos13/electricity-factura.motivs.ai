@@ -137,8 +137,9 @@
         <textarea id="bug-desc" required minlength="10" maxlength="5000" rows="5"></textarea>
         <label class="modal-label" data-i18n="bug_email_label">Tu email (opcional)</label>
         <input type="email" id="bug-email" maxlength="160" placeholder="tu@email.com">
-        <label class="modal-label" data-i18n="bug_data_label">Datos de tu factura (opcional, sin PII)</label>
-        <textarea id="bug-data" maxlength="8000" rows="4" data-i18n-placeholder="bug_data_placeholder" placeholder="Total, consumo, comercializadora..."></textarea>
+        <label class="modal-label" data-i18n="bug_screenshot_label">Captura de tu factura (opcional)</label>
+        <input type="file" id="bug-screenshot" accept="image/png,image/jpeg,image/webp">
+        <p id="bug-screenshot-name" class="bug-screenshot-name" hidden></p>
         <div class="modal-actions">
           <button type="submit" class="modal-submit" data-i18n="bug_send">Enviar</button>
         </div>
