@@ -469,6 +469,7 @@ button[type="submit"]:hover:not(:disabled) {
 .bug-fab:active { transform: translateY(0); }
 
 .modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.modal[hidden] { display: none; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(42, 45, 44, 0.45); backdrop-filter: blur(4px); }
 .modal-card {
   position: relative;
