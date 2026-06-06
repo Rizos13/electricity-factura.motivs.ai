@@ -432,24 +432,42 @@ if (bugOpen && bugModal) {
     el.addEventListener("click", () => { bugModal.hidden = true; });
   });
 }
+const bugScreenshot = document.getElementById("bug-screenshot");
+const bugScreenshotName = document.getElementById("bug-screenshot-name");
+const BUG_SCREENSHOT_MAX = 5 * 1024 * 1024;
+if (bugScreenshot && bugScreenshotName) {
+  bugScreenshot.addEventListener("change", () => {
+    const f = bugScreenshot.files && bugScreenshot.files[0];
+    if (!f) { bugScreenshotName.hidden = true; bugScreenshotName.textContent = ""; return; }
+    bugScreenshotName.hidden = false;
+    bugScreenshotName.textContent = `${f.name} (${Math.round(f.size / 1024)} KB)`;
+  });
+}
 if (bugForm) {
   bugForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     bugStatus.hidden = true;
     const description = document.getElementById("bug-desc").value.trim();
     const email = document.getElementById("bug-email").value.trim();
-    const factura_text = document.getElementById("bug-data").value.trim();
+    const file = bugScreenshot && bugScreenshot.files && bugScreenshot.files[0];
+    if (file && file.size > BUG_SCREENSHOT_MAX) {
+      bugStatus.hidden = false;
+      bugStatus.className = "modal-status err";
+      bugStatus.textContent = I18N.t("bug_screenshot_too_big");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("description", description);
+    if (email) fd.append("email", email);
+    if (file) fd.append("screenshot", file);
     try {
-      const res = await fetch("/api/bug-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description, email: email || null, factura_text: factura_text || null }),
-      });
+      const res = await fetch("/api/bug-report", { method: "POST", body: fd });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       bugStatus.hidden = false;
       bugStatus.className = "modal-status ok";
       bugStatus.textContent = I18N.t("bug_sent_ok");
       bugForm.reset();
+      if (bugScreenshotName) { bugScreenshotName.hidden = true; bugScreenshotName.textContent = ""; }
     } catch (err) {
       bugStatus.hidden = false;
       bugStatus.className = "modal-status err";
