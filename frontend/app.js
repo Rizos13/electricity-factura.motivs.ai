@@ -421,3 +421,39 @@ if (incomingRunId) {
   activeRunId = incomingRunId;
   loadResult();
 }
+
+const bugModal = document.getElementById("bug-modal");
+const bugOpen = document.getElementById("bug-open");
+const bugForm = document.getElementById("bug-form");
+const bugStatus = document.getElementById("bug-status");
+if (bugOpen && bugModal) {
+  bugOpen.addEventListener("click", () => { bugModal.hidden = false; });
+  bugModal.querySelectorAll("[data-close]").forEach(el => {
+    el.addEventListener("click", () => { bugModal.hidden = true; });
+  });
+}
+if (bugForm) {
+  bugForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    bugStatus.hidden = true;
+    const description = document.getElementById("bug-desc").value.trim();
+    const email = document.getElementById("bug-email").value.trim();
+    const factura_text = document.getElementById("bug-data").value.trim();
+    try {
+      const res = await fetch("/api/bug-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description, email: email || null, factura_text: factura_text || null }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      bugStatus.hidden = false;
+      bugStatus.className = "modal-status ok";
+      bugStatus.textContent = I18N.t("bug_sent_ok");
+      bugForm.reset();
+    } catch (err) {
+      bugStatus.hidden = false;
+      bugStatus.className = "modal-status err";
+      bugStatus.textContent = I18N.t("bug_sent_error");
+    }
+  });
+}

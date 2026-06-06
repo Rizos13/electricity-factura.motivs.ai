@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.gzip import GZipMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from backend.app.api.routes.bug_report import router as bug_report_router
 from backend.app.api.routes.health import router as health_router
 from backend.app.api.routes.result import router as result_router
 from backend.app.api.routes.upload import router as upload_router
@@ -59,6 +60,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(health_router)
     app.include_router(upload_router)
     app.include_router(result_router)
+    app.include_router(bug_report_router)
 
     if _FRONTEND_DIR.is_dir():
         app.mount("/static", StaticFiles(directory=_FRONTEND_DIR), name="static")

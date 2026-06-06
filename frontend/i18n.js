@@ -52,6 +52,15 @@ const I18N_DICT = {
     foot_data_link: "comparador CNMC",
     foot_no_state: "Sin cuenta, sin historial, sin cookies de tracking.",
     foot_motivs_about: "Sobre Motivs.ai",
+    bug_report: "Reportar un error",
+    bug_title: "Reportar un error",
+    bug_desc_label: "Describe el problema",
+    bug_email_label: "Tu email (opcional)",
+    bug_data_label: "Datos de tu factura (opcional, sin PII)",
+    bug_data_placeholder: "Total, consumo, comercializadora...",
+    bug_send: "Enviar",
+    bug_sent_ok: "Gracias. Hemos abierto la incidencia.",
+    bug_sent_error: "No pudimos enviar. Inténtalo más tarde.",
     about_h_motivs: "Sobre Motivs",
     about_p_motivs: "Motivs es la empresa detrás del gateway de seguridad SRE que protege este servicio. Construimos infraestructura para que cualquier producto que toque datos sensibles pueda demostrarlo, no sólo prometerlo. Más en motivs.ai.",
     about_p_motivs_link: "motivs.ai",
@@ -148,6 +157,15 @@ const I18N_DICT = {
     foot_data_link: "CNMC comparator",
     foot_no_state: "No account, no history, no tracking cookies.",
     foot_motivs_about: "About Motivs.ai",
+    bug_report: "Report a bug",
+    bug_title: "Report a bug",
+    bug_desc_label: "Describe the problem",
+    bug_email_label: "Your email (optional)",
+    bug_data_label: "Your bill data (optional, no PII)",
+    bug_data_placeholder: "Total, usage, retailer...",
+    bug_send: "Send",
+    bug_sent_ok: "Thanks. We opened the issue.",
+    bug_sent_error: "Could not send. Try again later.",
     about_h_motivs: "About Motivs",
     about_p_motivs: "Motivs is the company behind the SRE security gateway that protects this service. We build infrastructure so any product that touches sensitive data can prove it, not just promise it. More at motivs.ai.",
     about_p_motivs_link: "motivs.ai",
@@ -209,6 +227,9 @@ const I18N = {
   apply(root = document) {
     root.querySelectorAll("[data-i18n]").forEach(el => {
       el.textContent = this.t(el.getAttribute("data-i18n"));
+    });
+    root.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+      el.placeholder = this.t(el.getAttribute("data-i18n-placeholder"));
     });
     const titleKey = document.documentElement.getAttribute("data-i18n-title");
     if (titleKey) document.title = this.t(titleKey);
