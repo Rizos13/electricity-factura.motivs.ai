@@ -69,8 +69,11 @@ async def upload(request: Request, file: UploadFile = File(...)) -> UploadRespon
     try:
         extract = extract_factura(data, file.filename)
     except Exception as exc:
-        logger.exception("factura_extract_failed", extra={"filename": file.filename})
-        raise HTTPException(status_code=422, detail=f"Could not parse the bill: {exc}") from exc
+        logger.exception("factura_extract_failed", extra={"upload_filename": file.filename})
+        raise HTTPException(
+            status_code=422,
+            detail="We could not read this bill. Please upload a valid electricity bill PDF or image.",
+        ) from exc
 
     settings = request.app.state.settings
     pipeline, repository = build_async_pipeline(settings, kind="factura", shadow_baseline_required=False)
