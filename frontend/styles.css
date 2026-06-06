@@ -533,6 +533,22 @@ button[type="submit"]:hover:not(:disabled) {
 .modal-status { font-size: 13px; margin-top: 12px; padding: 10px 12px; border-radius: var(--radius-sm); }
 .modal-status.ok { background: var(--green); border: 1px solid var(--green-edge); color: var(--green-fg); }
 .modal-status.err { background: var(--red); border: 1px solid var(--red-edge); color: var(--red-fg); }
+.file-input-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.file-pick {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted-fg);
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.file-pick:hover { border-color: var(--green-deep); color: var(--fg); }
+.bug-screenshot-name { font-size: 12px; color: var(--muted-fg); margin: 4px 0 0; }
 
 .ranking-title { margin: 36px 0 4px; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
 .ranking-title .dim { color: var(--muted-fg); font-weight: 400; font-size: 14px; margin-left: 6px; }
