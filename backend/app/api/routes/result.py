@@ -60,12 +60,24 @@ async def result(
     ranked = rank_offers(offers, user_monthly, Constraints(only_verde=only_verde), top_n)
     rendered = [_render_offer(r, scaling_factor, user_monthly) for r in ranked]
     recommendation = _pick_recommendation(rendered)
+    if recommendation and "total_factura_eur" in (cached.get("defaulted_fields") or []):
+        recommendation = None
 
     extracted_set = set(cached.get("extracted_fields") or [])
 
+    defaulted = set(cached.get("defaulted_fields") or [])
+    critical = {"total_factura_eur", "consumo_kwh_punta", "consumo_kwh_llano", "consumo_kwh_valle"}
+    critical_defaulted = critical & defaulted
+    if "total_factura_eur" in critical_defaulted:
+        quality = "low"
+    elif critical_defaulted:
+        quality = "medium"
+    else:
+        quality = "high"
     return {
         "run_id": run_id,
         "filename": cached.get("filename"),
+        "extraction_quality": quality,
         "user_total_eur": user_total,
         "user_monthly_eur": user_monthly,
         "user_period_days": int(period_days),

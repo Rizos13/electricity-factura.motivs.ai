@@ -188,21 +188,34 @@ function renderResult(data) {
 }
 
 function renderDisclaimer(data) {
-  const kwh = data.user_annual_kwh;
-  if (!kwh) {
+  els.disclaimer.innerHTML = "";
+  els.disclaimer.className = "disclaimer";
+  const quality = data.extraction_quality || "high";
+  let titleKey, bodyKey, body;
+  if (quality === "low") {
+    titleKey = "quality_low_title";
+    bodyKey = "quality_low_body";
+    els.disclaimer.classList.add("warning");
+  } else if (quality === "medium") {
+    titleKey = "quality_medium_title";
+    bodyKey = "quality_medium_body";
+    els.disclaimer.classList.add("warning");
+  } else if (data.user_annual_kwh) {
+    titleKey = "disclaimer_title";
+    body = I18N.t("disclaimer_body").replace("{kwh}", Math.round(data.user_annual_kwh));
+  } else {
     els.disclaimer.hidden = true;
     return;
   }
   els.disclaimer.hidden = false;
-  els.disclaimer.innerHTML = "";
-  const title = document.createElement("div");
-  title.className = "disclaimer-title";
-  title.textContent = I18N.t("disclaimer_title");
-  const body = document.createElement("div");
-  body.className = "disclaimer-body";
-  body.textContent = I18N.t("disclaimer_body").replace("{kwh}", Math.round(kwh));
-  els.disclaimer.appendChild(title);
-  els.disclaimer.appendChild(body);
+  const titleEl = document.createElement("div");
+  titleEl.className = "disclaimer-title";
+  titleEl.textContent = I18N.t(titleKey);
+  const bodyEl = document.createElement("div");
+  bodyEl.className = "disclaimer-body";
+  bodyEl.textContent = body || I18N.t(bodyKey);
+  els.disclaimer.appendChild(titleEl);
+  els.disclaimer.appendChild(bodyEl);
   if (data.cnmc_snapshot_date) {
     const snap = document.createElement("div");
     snap.className = "disclaimer-snap";

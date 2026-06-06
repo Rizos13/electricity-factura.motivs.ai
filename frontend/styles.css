@@ -442,6 +442,7 @@ button[type="submit"]:hover:not(:disabled) {
 .disclaimer-title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
 .disclaimer-body { font-size: 13px; line-height: 1.5; }
 .disclaimer-snap { font-size: 11.5px; margin-top: 6px; opacity: 0.75; }
+.disclaimer.warning { background: var(--red); border-color: var(--red-edge); color: var(--red-fg); }
 
 .ranking-title { margin: 36px 0 4px; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
 .ranking-title .dim { color: var(--muted-fg); font-weight: 400; font-size: 14px; margin-left: 6px; }
