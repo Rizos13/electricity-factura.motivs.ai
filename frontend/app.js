@@ -182,7 +182,7 @@ function renderResult(data) {
   } else {
     els.userTotal.textContent = "";
   }
-  renderRecommendation(data.recommendation);
+  renderRecommendation(data.recommendation, data);
   renderDisclaimer(data);
   renderOffers(data.ranked_offers);
 }
@@ -224,7 +224,7 @@ function renderDisclaimer(data) {
   }
 }
 
-function renderRecommendation(rec) {
+function renderRecommendation(rec, data) {
   els.recommendation.innerHTML = "";
   if (!rec) {
     els.recommendation.hidden = true;
@@ -270,8 +270,90 @@ function renderRecommendation(rec) {
   els.recommendation.appendChild(brand);
   if (rec.oferta) els.recommendation.appendChild(oferta);
   els.recommendation.appendChild(savings);
+  if (data && annual !== 0) els.recommendation.appendChild(buildCalcBlock(rec, data));
   els.recommendation.appendChild(reason);
   els.recommendation.appendChild(cta);
+}
+
+function buildCalcBlock(rec, data) {
+  const wrap = document.createElement("div");
+  wrap.className = "rec-calc";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "rec-calc-btn";
+  btn.setAttribute("aria-expanded", "false");
+  btn.textContent = I18N.t("rec_calc_btn");
+  const panel = document.createElement("div");
+  panel.className = "rec-calc-panel";
+  panel.hidden = true;
+  panel.appendChild(renderCalcPanel(rec, data));
+  btn.addEventListener("click", () => {
+    const open = panel.hidden;
+    panel.hidden = !open;
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  wrap.appendChild(btn);
+  wrap.appendChild(panel);
+  return wrap;
+}
+
+function renderCalcPanel(rec, data) {
+  const monthSfx = I18N.t("monthly_suffix");
+  const days = data.user_period_days || 30;
+  const daysShort = I18N.t("days_short");
+  const userMonthly = data.user_monthly_eur || data.user_total_eur || 0;
+  const userTotal = data.user_total_eur || 0;
+  const userKwh = data.user_annual_kwh || 0;
+  const refKwh = data.cnmc_default_annual_kwh || 3500;
+  const planScaled = rec.importe_estimated_eur || 0;
+  const planRef = rec.importe_cnmc_default_eur || 0;
+  const monthSav = rec.savings_vs_user_eur || 0;
+  const annualSav = rec.savings_annual_eur || 0;
+
+  const frag = document.createDocumentFragment();
+  frag.appendChild(calcRow(
+    I18N.t("rec_calc_h_bill"),
+    `${formatEur(userTotal)} / ${days} ${daysShort} = ${formatEur(userMonthly)}${monthSfx}`,
+  ));
+  if (userKwh) {
+    frag.appendChild(calcRow(
+      I18N.t("rec_calc_h_kwh"),
+      `${formatKwh(userKwh)} kWh`,
+    ));
+  }
+  const planLines = [
+    `${I18N.t("rec_calc_cnmc_ref")}: ${formatEur(planRef)}${monthSfx} (${formatKwh(refKwh)} kWh)`,
+    `${I18N.t("rec_calc_scaled_to")}: ${formatEur(planScaled)}${monthSfx}`,
+  ];
+  frag.appendChild(calcRow(I18N.t("rec_calc_h_plan"), planLines.join("\n")));
+  const savLines = [
+    `${formatEur(userMonthly)} − ${formatEur(planScaled)} = ${formatEur(monthSav)}${monthSfx}`,
+    `${formatEur(monthSav)} × 12 = ${formatEur(Math.abs(annualSav))}${I18N.t("annual_suffix")}`,
+  ];
+  frag.appendChild(calcRow(I18N.t("rec_calc_h_save"), savLines.join("\n")));
+  const foot = document.createElement("p");
+  foot.className = "rec-calc-foot";
+  foot.textContent = I18N.t("rec_calc_disclaimer");
+  frag.appendChild(foot);
+  return frag;
+}
+
+function calcRow(label, value) {
+  const row = document.createElement("div");
+  row.className = "rec-calc-row";
+  const k = document.createElement("div");
+  k.className = "rec-calc-k";
+  k.textContent = label;
+  const v = document.createElement("div");
+  v.className = "rec-calc-v";
+  v.textContent = value;
+  row.appendChild(k);
+  row.appendChild(v);
+  return row;
+}
+
+function formatKwh(v) {
+  return Math.round(v).toLocaleString(I18N.lang === "en" ? "en-US" : "es-ES");
 }
 
 function renderProfile(profile, extraction) {
