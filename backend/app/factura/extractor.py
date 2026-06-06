@@ -28,7 +28,12 @@ _TOTAL_PAY_RE = re.compile(r"pagar\?\s*([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
 _TOTAL_ELEC_RE = re.compile(r"Total\s+electricidad\s+([0-9]+[.,][0-9]+)", re.IGNORECASE)
 _TOTAL_FACTURA_RE = re.compile(r"TOTAL\s+FACTURA\s*[:.]?\s*([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
 _TOTAL_TARIFA_RE = re.compile(r"TOTAL\s+TARIFA[A-ZÁÉÍÓÚ\s]*\s+([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
+_IMPORTE_PAGAR_RE = re.compile(r"(?:Importe|Cantidad|Total)\s+a\s+pagar\s*[:.]?\s*([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
+_IMPORTE_FACTURA_RE = re.compile(r"Importe\s+(?:total\s+)?(?:de\s+la\s+)?factura\s*[:.]?\s*([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
+_TOTAL_GENERIC_RE = re.compile(r"\bTOTAL\b\s*[:.]?\s*([0-9]{1,5}[.,][0-9]{2})\s*€", re.IGNORECASE)
 _ES_DE_RE = re.compile(r"es\s+de\s*[:.]?\s*\n?\s*([0-9]+[.,][0-9]+)\s*€", re.IGNORECASE)
+_TOTAL_KWH_GENERIC_RE = re.compile(r"(?:Consumo\s+(?:total|facturado)|Consumo\s+en\s+el\s+per[ií]odo)[^0-9]{0,40}([0-9]+(?:[.,][0-9]+)?)\s*kWh", re.IGNORECASE)
+_POTENCIA_CONTRATADA_RE = re.compile(r"Potencia\s+contratada[^0-9]{0,60}([0-9]+(?:[.,][0-9]+)?)\s*kW", re.IGNORECASE)
 _TOTAL_KWH_RE = re.compile(r"consumid[oa]s?\s+([0-9]+(?:[.,][0-9]+)?)\s*kWh", re.IGNORECASE)
 _ENERGIA_ACTIVA_RE = re.compile(r"Energ[ií]a\s+activa\s+([0-9]+(?:[.,][0-9]+)?)\s*kWh", re.IGNORECASE)
 _HOLA_RE = re.compile(r"Hola,?\s+([A-Z][\w\u00c0-\u017f]+(?:\s+[A-Z][\w\u00c0-\u017f]+)?)")
@@ -115,7 +120,8 @@ def _parse_text(text: str, ocr_used: bool) -> ExtractResult:
             extracted["region"] = region
             fields.append("region")
 
-    _try_float(extracted, fields, "potencia_p1_kw", _first_group(_POTENCIA_RE, text))
+    potencia_val = _first_group(_POTENCIA_RE, text) or _first_group(_POTENCIA_CONTRATADA_RE, text)
+    _try_float(extracted, fields, "potencia_p1_kw", potencia_val)
 
     punta, llano, valle = _find_consumos(text)
     if punta or llano or valle:
@@ -262,7 +268,7 @@ def _find_consumos(text: str) -> tuple[str | None, str | None, str | None]:
 
 
 def _find_total_kwh(text: str) -> float | None:
-    for pattern in (_TOTAL_KWH_RE, _ENERGIA_ACTIVA_RE):
+    for pattern in (_TOTAL_KWH_RE, _ENERGIA_ACTIVA_RE, _TOTAL_KWH_GENERIC_RE):
         m = pattern.search(text)
         if m:
             v = _to_float(m.group(1))
@@ -272,7 +278,7 @@ def _find_total_kwh(text: str) -> float | None:
 
 
 def _find_total(text: str) -> float | None:
-    for pattern in (_TOTAL_FACTURA_RE, _TOTAL_TARIFA_RE, _TOTAL_ELEC_RE, _TOTAL_PAY_RE, _ES_DE_RE):
+    for pattern in (_TOTAL_FACTURA_RE, _TOTAL_TARIFA_RE, _IMPORTE_PAGAR_RE, _IMPORTE_FACTURA_RE, _TOTAL_ELEC_RE, _TOTAL_PAY_RE, _ES_DE_RE, _TOTAL_GENERIC_RE):
         m = pattern.search(text)
         if m:
             value = _to_float(m.group(1))
