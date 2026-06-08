@@ -60,14 +60,15 @@ setup_venv() {
 
 install_sre_wheel() {
     say "downloading motivs-sre security gate..."
-    local tmp
-    tmp=$(mktemp /tmp/motivs_sre_XXXXXX.whl)
-    if ! curl -fsSL "$WHEEL_URL" -o "$tmp"; then
-        rm -f "$tmp"
+    local tmp_dir tmp_wheel
+    tmp_dir=$(mktemp -d /tmp/motivs_sre_XXXXXX)
+    tmp_wheel="$tmp_dir/motivs_sre-0.5.0-py3-none-any.whl"
+    if ! curl -fsSL "$WHEEL_URL" -o "$tmp_wheel"; then
+        rm -rf "$tmp_dir"
         die "failed to download motivs-sre wheel from $WHEEL_URL. Check your network or contact support."
     fi
-    "$INSTALL_DIR/.venv/bin/pip" install --quiet --force-reinstall "$tmp"
-    rm -f "$tmp"
+    "$INSTALL_DIR/.venv/bin/pip" install --quiet --force-reinstall "$tmp_wheel"
+    rm -rf "$tmp_dir"
     ok "motivs-sre installed"
 }
 
