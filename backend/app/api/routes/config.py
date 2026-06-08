@@ -17,8 +17,9 @@ class ClientConfig(BaseModel):
 async def client_config(request: Request) -> ClientConfig:
     settings = request.app.state.settings
     token = getattr(settings, "github_token", "") or ""
+    repo = getattr(settings, "bug_report_repo", "") or ""
     return ClientConfig(
-        bug_report_enabled=bool(token),
+        bug_report_enabled=bool(token and repo),
         hosted_mode=getattr(settings, "hosted_mode", False),
         local_install_url=getattr(settings, "local_install_url", ""),
     )

@@ -12,13 +12,12 @@ from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 router = APIRouter(prefix="/api", tags=["bug-report"])
 logger = logging.getLogger(__name__)
 
-_GITHUB_REPO = "Rizos13/electricity-factura.motivs.ai"
 _LABELS = ["bug", "user-report"]
 _SCREENSHOT_MAX_BYTES = 5 * 1024 * 1024
 _SCREENSHOT_ALLOWED = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
 
 
-async def _upload_screenshot(client: httpx.AsyncClient, token: str, file: UploadFile) -> str | None:
+async def _upload_screenshot(client: httpx.AsyncClient, token: str, repo: str, file: UploadFile) -> str | None:
     ext = _SCREENSHOT_ALLOWED.get(file.content_type or "")
     if not ext:
         raise HTTPException(status_code=415, detail="Unsupported screenshot type")
@@ -31,7 +30,7 @@ async def _upload_screenshot(client: httpx.AsyncClient, token: str, file: Upload
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     path = f"bug-screenshots/{ts}-{digest}.{ext}"
     res = await client.put(
-        f"https://api.github.com/repos/{_GITHUB_REPO}/contents/{path}",
+        f"https://api.github.com/repos/{repo}/contents/{path}",
         headers={
             "Authorization": f"Bearer {token}",
             "Accept": "application/vnd.github+json",
@@ -56,14 +55,16 @@ async def bug_report(
     email: str | None = Form(default=None, max_length=160),
     screenshot: UploadFile | None = File(default=None),
 ) -> dict[str, object]:
-    token = getattr(request.app.state.settings, "github_token", "") or ""
-    if not token:
+    settings = request.app.state.settings
+    token = getattr(settings, "github_token", "") or ""
+    repo = getattr(settings, "bug_report_repo", "") or ""
+    if not token or not repo:
         raise HTTPException(status_code=503, detail="Bug reporting is not configured")
 
     async with httpx.AsyncClient(timeout=15.0) as client:
         screenshot_url: str | None = None
         if screenshot is not None and screenshot.filename:
-            screenshot_url = await _upload_screenshot(client, token, screenshot)
+            screenshot_url = await _upload_screenshot(client, token, repo, screenshot)
 
         parts: list[str] = ["## Description", "", description.strip(), ""]
         if email:
@@ -76,7 +77,7 @@ async def bug_report(
         title = f"user report: {description.strip().splitlines()[0][:70]}"
 
         res = await client.post(
-            f"https://api.github.com/repos/{_GITHUB_REPO}/issues",
+            f"https://api.github.com/repos/{repo}/issues",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Accept": "application/vnd.github+json",

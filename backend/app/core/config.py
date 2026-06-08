@@ -82,6 +82,7 @@ class Settings(BaseSettings):
     )
 
     github_token: str = Field(default="", alias="GITHUB_TOKEN")
+    bug_report_repo: str = Field(default="", alias="MOTIVS_BUG_REPORT_REPO")
 
     @field_validator("cors_origins", "trusted_hosts", "regions", mode="before")
     @classmethod
