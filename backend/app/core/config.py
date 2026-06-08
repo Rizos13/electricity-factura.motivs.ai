@@ -75,7 +75,6 @@ class Settings(BaseSettings):
 
     blurb_enabled: bool = Field(default=False, alias="MOTIVS_BLURB_ENABLED")
 
-    admin_token: str = Field(default="", alias="MOTIVS_ADMIN_TOKEN")
     github_token: str = Field(default="", alias="GITHUB_TOKEN")
 
     @field_validator("cors_origins", "trusted_hosts", "regions", mode="before")
