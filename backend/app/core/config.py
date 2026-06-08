@@ -75,6 +75,12 @@ class Settings(BaseSettings):
 
     blurb_enabled: bool = Field(default=False, alias="MOTIVS_BLURB_ENABLED")
 
+    hosted_mode: bool = Field(default=False, alias="MOTIVS_HOSTED_MODE")
+    local_install_url: str = Field(
+        default="https://github.com/Rizos13/electricity-factura.motivs.ai",
+        alias="MOTIVS_LOCAL_INSTALL_URL",
+    )
+
     github_token: str = Field(default="", alias="GITHUB_TOKEN")
 
     @field_validator("cors_origins", "trusted_hosts", "regions", mode="before")
