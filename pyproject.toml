@@ -19,7 +19,7 @@ dependencies = [
   "pdfplumber>=0.11.0",
   "pytesseract>=0.3.10",
   "pillow>=10.4.0",
-  "motivs-sre @ git+https://github.com/Rizos13/Motivs_SRE.git@v0.5.0#subdirectory=packages/core",
+  "motivs-sre>=0.5.0",
 ]
 
 [project.optional-dependencies]
