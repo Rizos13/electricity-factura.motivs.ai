@@ -544,6 +544,10 @@ const bugModal = document.getElementById("bug-modal");
 const bugOpen = document.getElementById("bug-open");
 const bugForm = document.getElementById("bug-form");
 const bugStatus = document.getElementById("bug-status");
+if (bugOpen) bugOpen.hidden = true;
+fetch("/api/config").then(r => r.ok ? r.json() : null).then(cfg => {
+  if (cfg && cfg.bug_report_enabled && bugOpen) bugOpen.hidden = false;
+}).catch(() => {});
 if (bugOpen && bugModal) {
   bugOpen.addEventListener("click", () => { bugModal.hidden = false; });
   bugModal.querySelectorAll("[data-close]").forEach(el => {
