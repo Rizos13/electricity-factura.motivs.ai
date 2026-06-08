@@ -496,6 +496,7 @@ button[type="submit"]:hover:not(:disabled) {
   align-items: center;
   justify-content: center;
 }
+.bug-fab[hidden] { display: none; }
 .bug-fab:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(122, 88, 0, 0.25); }
 .bug-fab:active { transform: translateY(0); }
 
