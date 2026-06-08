@@ -33,8 +33,8 @@ require_python() {
     local ver
     ver=$("$py" -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")')
     case "$ver" in
-        3.11|3.12|3.13) ok "python $ver detected" ;;
-        *) die "python 3.11-3.13 required, found $ver" ;;
+        3.13) ok "python $ver detected" ;;
+        *) die "python 3.13 required (found $ver). Install with: brew install python@3.13" ;;
     esac
 }
 

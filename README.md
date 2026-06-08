@@ -15,7 +15,7 @@ If you don't trust us — install it, watch the network with Little Snitch, and 
 
 ## Install (macOS)
 
-Requirements: Python 3.11 / 3.12 / 3.13, git.
+Requirements: Python 3.13, git. If you don't have Python 3.13 yet: `brew install python@3.13`.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Rizos13/electricity-factura.motivs.ai/main/install.sh | bash
