@@ -12,7 +12,7 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: PYTHON_VERSION
-        value: "3.11.10"
+        value: "3.13.0"
       - key: MOTIVS_ENVIRONMENT
         value: production
       - key: MOTIVS_LOG_LEVEL
