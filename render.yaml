@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: electricity-factura
+    runtime: python
+    plan: free
+    region: frankfurt
+    pythonVersion: "3.11"
+    buildCommand: |
+      pip install --upgrade pip
+      pip install "https://github.com/Rizos13/sre-dist/releases/latest/download/motivs_sre-0.5.0-py3-none-any.whl"
+      pip install -e .
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: MOTIVS_ENVIRONMENT
+        value: production
+      - key: MOTIVS_LOG_LEVEL
+        value: INFO
+      - key: MOTIVS_HMAC_KEY
+        generateValue: true
+      - key: MOTIVS_TENANT_SLUG
+        value: factura-es-hosted
+      - key: MOTIVS_TRUSTED_HOSTS
+        value: "*"
+      - key: MOTIVS_CORS_ORIGINS
+        value: "https://electricity-factura.onrender.com"
+      - key: MOTIVS_REGIONS
+        value: "barcelona,girona,lleida,tarragona"
+      - key: MOTIVS_BLURB_ENABLED
+        value: "false"
+      - key: GITHUB_TOKEN
+        sync: false
