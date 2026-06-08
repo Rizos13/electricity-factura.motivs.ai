@@ -8,7 +8,7 @@
 set -euo pipefail
 
 FACTURA_REPO="${MOTIVS_FACTURA_REPO:-https://github.com/Rizos13/electricity-factura.motivs.ai.git}"
-WHEEL_URL="${MOTIVS_SRE_WHEEL_URL:-https://github.com/Rizos13/motivs-sre-dist/releases/latest/download/motivs_sre-py3-none-any.whl}"
+WHEEL_URL="${MOTIVS_SRE_WHEEL_URL:-https://github.com/Rizos13/sre-dist/releases/latest/download/motivs_sre-0.5.0-py3-none-any.whl}"
 INSTALL_DIR="${MOTIVS_FACTURA_HOME:-$HOME/.motivs/factura}"
 BIN_DIR="${MOTIVS_BIN:-$HOME/.local/bin}"
 LAUNCHER="motivs-factura"
