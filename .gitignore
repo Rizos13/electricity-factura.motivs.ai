@@ -19,7 +19,8 @@ env/
 .coverage
 htmlcov/
 
-backend/artifacts/
+backend/artifacts/*
+!backend/artifacts/offers.jsonl
 backend/.uploads/
 *.log
 
