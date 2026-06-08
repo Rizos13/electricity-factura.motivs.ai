@@ -546,7 +546,14 @@ const bugForm = document.getElementById("bug-form");
 const bugStatus = document.getElementById("bug-status");
 if (bugOpen) bugOpen.hidden = true;
 fetch("/api/config").then(r => r.ok ? r.json() : null).then(cfg => {
-  if (cfg && cfg.bug_report_enabled && bugOpen) bugOpen.hidden = false;
+  if (!cfg) return;
+  if (cfg.bug_report_enabled && bugOpen) bugOpen.hidden = false;
+  if (cfg.hosted_mode) {
+    const banner = document.getElementById("hosted-banner");
+    const link = document.getElementById("hosted-banner-link");
+    if (banner) banner.hidden = false;
+    if (link && cfg.local_install_url) link.href = cfg.local_install_url;
+  }
 }).catch(() => {});
 if (bugOpen && bugModal) {
   bugOpen.addEventListener("click", () => { bugModal.hidden = false; });

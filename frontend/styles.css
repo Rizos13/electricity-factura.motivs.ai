@@ -462,6 +462,34 @@ button[type="submit"]:hover:not(:disabled) {
   color: white;
 }
 
+.hosted-banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--yellow);
+  border: 1px solid var(--yellow-edge);
+  color: var(--yellow-fg);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 0 0 18px;
+  font-size: 13px;
+}
+.hosted-banner[hidden] { display: none; }
+.hosted-banner-text { flex: 1 1 240px; }
+.hosted-banner-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--fg);
+  color: white;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.hosted-banner-link:hover { color: white; text-decoration: none; opacity: 0.92; }
 .disclaimer {
   background: var(--blue);
   border: 1px solid var(--blue-edge);
