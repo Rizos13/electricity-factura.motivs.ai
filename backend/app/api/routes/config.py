@@ -9,9 +9,16 @@ router = APIRouter(prefix="/api", tags=["config"])
 
 class ClientConfig(BaseModel):
     bug_report_enabled: bool
+    hosted_mode: bool
+    local_install_url: str
 
 
 @router.get("/config", response_model=ClientConfig)
 async def client_config(request: Request) -> ClientConfig:
-    token = getattr(request.app.state.settings, "github_token", "") or ""
-    return ClientConfig(bug_report_enabled=bool(token))
+    settings = request.app.state.settings
+    token = getattr(settings, "github_token", "") or ""
+    return ClientConfig(
+        bug_report_enabled=bool(token),
+        hosted_mode=getattr(settings, "hosted_mode", False),
+        local_install_url=getattr(settings, "local_install_url", ""),
+    )
