@@ -191,6 +191,7 @@ function renderDisclaimer(data) {
   els.disclaimer.innerHTML = "";
   els.disclaimer.className = "disclaimer";
   const quality = data.extraction_quality || "high";
+  const recState = data.recommendation_state || "ok";
   let titleKey, bodyKey, body;
   if (quality === "low") {
     titleKey = "quality_low_title";
@@ -200,6 +201,9 @@ function renderDisclaimer(data) {
     titleKey = "quality_medium_title";
     bodyKey = "quality_medium_body";
     els.disclaimer.classList.add("warning");
+  } else if (recState === "already_competitive") {
+    titleKey = "competitive_title";
+    bodyKey = "competitive_body";
   } else if (data.user_annual_kwh) {
     titleKey = "disclaimer_title";
     body = I18N.t("disclaimer_body").replace("{kwh}", Math.round(data.user_annual_kwh));

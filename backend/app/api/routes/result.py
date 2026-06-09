@@ -93,8 +93,15 @@ async def result(
         quality = "high"
 
     recommendation = _pick_recommendation(rendered)
+    recommendation_state = "ok"
     if recommendation and critical_defaulted:
         recommendation = None
+        recommendation_state = "missing_data"
+    elif recommendation and (recommendation.get("savings_annual_eur") or 0) <= 0:
+        recommendation = None
+        recommendation_state = "already_competitive"
+    elif not recommendation:
+        recommendation_state = "no_match"
 
     return {
         "run_id": run_id,
@@ -131,6 +138,7 @@ async def result(
         },
         "profile_summary": {f: masked.get(f) for f in _PROFILE_VISIBLE_FIELDS},
         "recommendation": recommendation,
+        "recommendation_state": recommendation_state,
         "ranked_offers": rendered,
     }
 
