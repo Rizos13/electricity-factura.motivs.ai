@@ -81,10 +81,6 @@ async def result(
     for i, o in enumerate(rendered):
         o["rank"] = i + 1
 
-    recommendation = _pick_recommendation(rendered)
-    if recommendation and "total_factura_eur" in (cached.get("defaulted_fields") or []):
-        recommendation = None
-
     extracted_set = set(cached.get("extracted_fields") or [])
     defaulted = set(cached.get("defaulted_fields") or [])
     critical = {"total_factura_eur", "consumo_kwh_punta", "consumo_kwh_llano", "consumo_kwh_valle"}
@@ -95,6 +91,10 @@ async def result(
         quality = "medium"
     else:
         quality = "high"
+
+    recommendation = _pick_recommendation(rendered)
+    if recommendation and critical_defaulted:
+        recommendation = None
 
     return {
         "run_id": run_id,
