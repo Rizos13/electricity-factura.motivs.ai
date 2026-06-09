@@ -73,6 +73,9 @@ def extract_factura(file_bytes: bytes, filename: str) -> ExtractResult:
     if lower.endswith(".pdf"):
         text = _extract_text_pdf(file_bytes)
         ocr_used = False
+        if len(text.strip()) < 50:
+            text = _ocr_pdf(file_bytes)
+            ocr_used = True
     elif lower.endswith((".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff")):
         text = _extract_text_image(file_bytes)
         ocr_used = True
@@ -86,6 +89,22 @@ def _extract_text_pdf(file_bytes: bytes) -> str:
     with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
         for page in pdf.pages:
             chunks.append(page.extract_text() or "")
+    return "\n".join(chunks)
+
+
+def _ocr_pdf(file_bytes: bytes) -> str:
+    import pymupdf
+    import pytesseract
+
+    chunks: list[str] = []
+    doc = pymupdf.open(stream=file_bytes, filetype="pdf")
+    try:
+        for page in doc:
+            pix = page.get_pixmap(dpi=200)
+            img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+            chunks.append(pytesseract.image_to_string(img, lang="spa+eng", config="--psm 6"))
+    finally:
+        doc.close()
     return "\n".join(chunks)
 
 
