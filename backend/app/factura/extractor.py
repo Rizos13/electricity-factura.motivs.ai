@@ -52,10 +52,19 @@ _COMERCIALIZADORA_KEYWORDS = (
     "GESTERNOVA", "PLENITUDE", "AURA ENERGIA", "AUDAX", "FACTOR",
 )
 _REGION_BY_POSTAL_PREFIX = {
-    "08": "barcelona",
-    "17": "girona",
-    "25": "lleida",
-    "43": "tarragona",
+    "01": "alava", "02": "albacete", "03": "alicante", "04": "almeria",
+    "05": "avila", "06": "badajoz", "07": "baleares", "08": "barcelona",
+    "09": "burgos", "10": "caceres", "11": "cadiz", "12": "castellon",
+    "13": "ciudad-real", "14": "cordoba", "15": "a-coruna", "16": "cuenca",
+    "17": "girona", "18": "granada", "19": "guadalajara", "20": "gipuzkoa",
+    "21": "huelva", "22": "huesca", "23": "jaen", "24": "leon",
+    "25": "lleida", "26": "la-rioja", "27": "lugo", "28": "madrid",
+    "29": "malaga", "30": "murcia", "31": "navarra", "32": "ourense",
+    "33": "asturias", "34": "palencia", "35": "las-palmas", "36": "pontevedra",
+    "37": "salamanca", "38": "tenerife", "39": "cantabria", "40": "segovia",
+    "41": "sevilla", "42": "soria", "43": "tarragona", "44": "teruel",
+    "45": "toledo", "46": "valencia", "47": "valladolid", "48": "bizkaia",
+    "49": "zamora", "50": "zaragoza", "51": "ceuta", "52": "melilla",
 }
 
 
