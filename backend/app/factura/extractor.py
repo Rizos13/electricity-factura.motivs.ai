@@ -16,7 +16,7 @@ _IBAN_RE = re.compile(r"\b(ES[0-9]{2}[\s0-9*]{20,30})\b")
 _EUR_RE = re.compile(r"([0-9]{1,5}[.,][0-9]{2})\s*€")
 _POSTAL_RE = re.compile(r"\b([0-4][0-9]{4}|5[0-2][0-9]{3})\b")
 _TARIFA_RE = re.compile(r"\b([23][.\s]?[01]\s*TD)\b", re.IGNORECASE)
-_POTENCIA_RE = re.compile(r"(?:Potencia(?:\s+contratada)?[^a-z0-9]+)?P1\s*[:=/]?\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:kW)?", re.IGNORECASE)
+_POTENCIA_RE = re.compile(r"P1\s*[:=/.]?\s*([0-9]{1,2}(?:[.,][0-9]{1,3})?)[\s\S]{0,40}?kW(?!h)", re.IGNORECASE)
 _CONSUMOS_RE = re.compile(
     r"consumos\s+han\s+sido\s+punta:\s*([0-9]+[.,]?[0-9]*)\s*kWh,\s*llano:\s*([0-9]+[.,]?[0-9]*)\s*kWh,\s*valle:\s*([0-9]+[.,]?[0-9]*)\s*kWh",
     re.IGNORECASE,
@@ -50,6 +50,8 @@ _COMERCIALIZADORA_KEYWORDS = (
     "WEKIWI", "NIBA", "IMAGINA", "DAIMUZ", "GAOLANIA", "CATGAS", "LUMISA",
     "ENERGIA NUFRI", "CIDE HC", "DOMESTICA", "TELECOR", "ENERGYASSET",
     "GESTERNOVA", "PLENITUDE", "AURA ENERGIA", "AUDAX", "FACTOR",
+    "GAS & POWER", "GAS&POWER", "CURENERGÍA", "CURENERGIA", "ENERGÍA XXI", "ENERGIA XXI",
+    "BASER", "RÉGSITI", "REGSITI",
 )
 _REGION_BY_POSTAL_PREFIX = {
     "01": "alava", "02": "albacete", "03": "alicante", "04": "almeria",
@@ -175,7 +177,7 @@ def _parse_text(text: str, ocr_used: bool) -> ExtractResult:
         fields.append("periodo_facturacion_dias")
 
     defaulted = _fill_defaults(extracted)
-    extracted["ocr_text"] = text[:200_000]
+    extracted["ocr_text"] = text[:100_000]
 
     return ExtractResult(
         record=extracted,
