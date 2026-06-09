@@ -17,6 +17,7 @@ dependencies = [
   "redis>=5.0.0",
   "httpx>=0.27.0",
   "pdfplumber>=0.11.0",
+  "pymupdf>=1.24.0",
   "pytesseract>=0.3.10",
   "pillow>=10.4.0",
   "motivs-sre>=0.5.0",

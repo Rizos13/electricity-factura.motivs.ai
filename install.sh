@@ -79,7 +79,7 @@ install_factura_deps() {
         "pydantic-settings>=2.4.0" "orjson>=3.10.0" "pyyaml>=6.0" \
         "lancedb>=0.15.0" "pyarrow>=15.0.0" "pandas>=2.2.0" "numpy>=1.26.0" \
         "redis>=5.0.0" "httpx>=0.27.0" \
-        "pdfplumber>=0.11.0" "pytesseract>=0.3.10" "pillow>=10.4.0"
+        "pdfplumber>=0.11.0" "pymupdf>=1.24.0" "pytesseract>=0.3.10" "pillow>=10.4.0"
     "$INSTALL_DIR/.venv/bin/pip" install --quiet --no-deps -e "$INSTALL_DIR"
     ok "factura installed"
 }
