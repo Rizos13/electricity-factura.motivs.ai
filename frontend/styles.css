@@ -112,6 +112,7 @@ main.wrap {
   height: 18px;
   width: auto;
   display: block;
+  filter: invert(1);
 }
 .brand-sep { color: var(--muted-fg); margin: 0 2px; }
 .brand-product { font-weight: 500; }
