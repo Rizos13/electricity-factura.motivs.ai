@@ -157,19 +157,27 @@ main.wrap {
 
 /* Footer */
 .foot {
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--border);
   margin-top: 64px;
-  padding: 24px 0;
+  padding: 28px 0;
+  background: var(--surface);
 }
 .foot .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  color: var(--muted-fg);
+  font-size: 13px;
+  color: var(--fg);
+  flex-wrap: wrap;
+  gap: 12px;
 }
-.foot a { color: var(--muted-fg); }
-.foot a:hover { color: var(--fg); }
+.foot a {
+  color: var(--fg);
+  font-weight: 500;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+}
+.foot a:hover { border-color: var(--fg); }
 
 /* Hero / upload view */
 #upload-view {
@@ -773,24 +781,28 @@ main.wrap {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-pill);
-  background: var(--fg);
-  color: var(--primary-fg);
-  border: 0;
-  font-weight: 700;
-  font-size: 20px;
+  background: var(--bg);
+  color: var(--muted-fg);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
   z-index: 50;
-  box-shadow: var(--shadow-lift);
-  transition: transform 0.15s;
+  box-shadow: 0 4px 14px rgba(15, 17, 23, 0.08);
+  transition: transform 0.15s, border-color 0.15s, color 0.15s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 .bug-fab[hidden] { display: none; }
-.bug-fab:hover { transform: translateY(-2px); }
+.bug-fab:hover {
+  transform: translateY(-2px);
+  border-color: var(--fg);
+  color: var(--fg);
+}
 
 .modal {
   position: fixed;
