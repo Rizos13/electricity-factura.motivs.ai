@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY pyproject.toml ./
 RUN pip install --upgrade pip && \
-    pip install "https://github.com/Rizos13/sre-dist/releases/latest/download/motivs_sre-0.5.0-py3-none-any.whl" && \
+    pip install "https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl" && \
     pip install \
       "fastapi>=0.115.0" \
       "uvicorn[standard]>=0.30.0" \
