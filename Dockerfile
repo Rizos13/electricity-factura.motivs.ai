@@ -18,8 +18,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY pyproject.toml ./
+
+ARG MOTIVS_SRE_WHEEL_URL="https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl"
+# checksum kept here rather than fetched next to the artifact, so a replaced
+# release does not also get to replace what it is checked against
+ARG MOTIVS_SRE_WHEEL_SHA256="349cbd1ba9334976506bf6559e59ca6f4f685aca6b8831e2c8c88b61ad2f69a7"
+
+# pip parses the wheel filename for metadata, so it has to keep its own name
 RUN pip install --upgrade pip && \
-    pip install "https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl" && \
+    wheel_name="$(basename "$MOTIVS_SRE_WHEEL_URL")" && \
+    curl -fsSL "$MOTIVS_SRE_WHEEL_URL" -o "/tmp/$wheel_name" && \
+    echo "${MOTIVS_SRE_WHEEL_SHA256}  /tmp/$wheel_name" | sha256sum -c - && \
+    pip install "/tmp/$wheel_name" && \
+    rm -f "/tmp/$wheel_name" && \
     pip install \
       "fastapi>=0.115.0" \
       "uvicorn[standard]>=0.30.0" \
