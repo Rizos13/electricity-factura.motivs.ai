@@ -20,7 +20,9 @@ dependencies = [
   "pymupdf>=1.24.0",
   "pytesseract>=0.3.10",
   "pillow>=10.4.0",
-  "motivs-sre>=0.5.0",
+  # pinned to the published artifact on purpose. a bare name would be resolved
+  # from the public index, where this name is not registered by us
+  "motivs-sre @ https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl",
 ]
 
 [project.optional-dependencies]
