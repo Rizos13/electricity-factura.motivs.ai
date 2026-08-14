@@ -9,6 +9,9 @@ set -euo pipefail
 
 FACTURA_REPO="${MOTIVS_FACTURA_REPO:-https://github.com/Rizos13/electricity-factura.motivs.ai.git}"
 WHEEL_URL="${MOTIVS_SRE_WHEEL_URL:-https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl}"
+# checksum of the artifact this installer expects. it lives here, in a different
+# repository than the artifact, so replacing the release is not enough to pass
+WHEEL_SHA256="${MOTIVS_SRE_WHEEL_SHA256:-349cbd1ba9334976506bf6559e59ca6f4f685aca6b8831e2c8c88b61ad2f69a7}"
 INSTALL_DIR="${MOTIVS_FACTURA_HOME:-$HOME/.motivs/factura}"
 BIN_DIR="${MOTIVS_BIN:-$HOME/.local/bin}"
 LAUNCHER="motivs-factura"
@@ -67,6 +70,19 @@ install_sre_wheel() {
         rm -rf "$tmp_dir"
         die "failed to download motivs-sre wheel from $WHEEL_URL. Check your network or contact support."
     fi
+
+    local actual
+    actual=$(shasum -a 256 "$tmp_wheel" | awk '{print $1}')
+    if [ "$actual" != "$WHEEL_SHA256" ]; then
+        rm -rf "$tmp_dir"
+        die "wheel checksum mismatch, refusing to install.
+  expected $WHEEL_SHA256
+  got      $actual
+  from     $WHEEL_URL
+This means the downloaded file is not the one this installer was built against."
+    fi
+    ok "wheel checksum verified"
+
     "$INSTALL_DIR/.venv/bin/pip" install --quiet --force-reinstall "$tmp_wheel"
     rm -rf "$tmp_dir"
     ok "motivs-sre installed"
