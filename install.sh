@@ -8,10 +8,10 @@
 set -euo pipefail
 
 FACTURA_REPO="${MOTIVS_FACTURA_REPO:-https://github.com/Rizos13/electricity-factura.motivs.ai.git}"
-WHEEL_URL="${MOTIVS_SRE_WHEEL_URL:-https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl}"
+WHEEL_URL="${MOTIVS_SRE_WHEEL_URL:-https://github.com/Rizos13/guard-dist/releases/download/v0.8.0/motivs_guard-0.8.0-cp313-none-any.whl}"
 # checksum of the artifact this installer expects. it lives here, in a different
 # repository than the artifact, so replacing the release is not enough to pass
-WHEEL_SHA256="${MOTIVS_SRE_WHEEL_SHA256:-349cbd1ba9334976506bf6559e59ca6f4f685aca6b8831e2c8c88b61ad2f69a7}"
+WHEEL_SHA256="${MOTIVS_SRE_WHEEL_SHA256:-b7b2083beaeb47d2c398fa2df5b5b51ffd8917eeacd02da14211f09ebc394e2e}"
 INSTALL_DIR="${MOTIVS_FACTURA_HOME:-$HOME/.motivs/factura}"
 BIN_DIR="${MOTIVS_BIN:-$HOME/.local/bin}"
 LAUNCHER="motivs-factura"
@@ -62,13 +62,13 @@ setup_venv() {
 }
 
 install_sre_wheel() {
-    say "downloading motivs-sre security gate..."
+    say "downloading the security gate..."
     local tmp_dir tmp_wheel
     tmp_dir=$(mktemp -d /tmp/motivs_sre_XXXXXX)
-    tmp_wheel="$tmp_dir/motivs_sre-0.5.0-py3-none-any.whl"
+    tmp_wheel="$tmp_dir/$(basename "$WHEEL_URL")"
     if ! curl -fsSL "$WHEEL_URL" -o "$tmp_wheel"; then
         rm -rf "$tmp_dir"
-        die "failed to download motivs-sre wheel from $WHEEL_URL. Check your network or contact support."
+        die "failed to download the security gate from $WHEEL_URL. Check your network or contact support."
     fi
 
     local actual
@@ -83,9 +83,12 @@ This means the downloaded file is not the one this installer was built against."
     fi
     ok "wheel checksum verified"
 
+    # 0.8.0 renamed the distribution. leaving the old one installed would give
+    # two packages owning the same module directory
+    "$INSTALL_DIR/.venv/bin/pip" uninstall --quiet --yes motivs-sre >/dev/null 2>&1 || true
     "$INSTALL_DIR/.venv/bin/pip" install --quiet --force-reinstall "$tmp_wheel"
     rm -rf "$tmp_dir"
-    ok "motivs-sre installed"
+    ok "security gate installed"
 }
 
 install_factura_deps() {
