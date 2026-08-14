@@ -7,7 +7,7 @@ Compare your Spanish electricity bill against the public CNMC catalog. Runs loca
 Most comparators want you to upload your bill to their server, then ask you to trust them with that data. This one does the opposite:
 
 - The whole pipeline runs on your Mac.
-- The Motivs SRE security gate masks every PII field (CUPS, NIF, IBAN, address, name) before anything else happens, locally, in memory.
+- The Motivs Guard security gate masks every PII field (CUPS, NIF, IBAN, address, name) before anything else happens, locally, in memory.
 - After the comparison, the masked profile is dropped. No accounts, no logs sent anywhere.
 - The only network traffic during a comparison is reading the bundled CNMC offer catalog from local disk.
 
@@ -25,7 +25,7 @@ The installer:
 
 1. Clones the latest source into `~/.motivs/factura/`
 2. Creates an isolated Python virtual environment in that directory
-3. Downloads the Motivs SRE security gate (bytecode-only wheel)
+3. Downloads the Motivs Guard security gate, a compiled wheel, and verifies its checksum
 4. Installs all dependencies
 5. Generates a per-install HMAC key (your masking secret, unique to your Mac)
 6. Registers the `motivs-factura` command in `~/.local/bin`
@@ -54,7 +54,7 @@ Other commands:
 motivs-factura status     # is it running?
 motivs-factura stop       # stop the server
 motivs-factura logs       # tail the local log
-motivs-factura update     # pull latest source + refresh SRE gate
+motivs-factura update     # pull latest source + refresh the security gate
 ```
 
 ## What's open and what isn't
@@ -64,9 +64,25 @@ motivs-factura update     # pull latest source + refresh SRE gate
 | Frontend (HTML/CSS/JS) | Open, this repository |
 | Backend (FastAPI app, extractor, tariff model, ranker) | Open, this repository |
 | CNMC parser and bundled snapshot | Open, this repository |
-| `motivs-sre` security gate | Proprietary, distributed as compiled wheel only |
+| Motivs Guard security gate | Licensed product, shipped as a compiled wheel |
 
-The reasoning: the gate is the part you'd want to trust on your bill data. We ship it as a binary so you can verify behavior (network, file access, output) but don't expose the implementation to copy-paste cloning.
+Everything specific to comparing electricity bills is in this repository and you can read all of it. The security gate is a separate commercial product that this app licenses, so its source is not published here. What you can verify is its behaviour: watch its network activity, its file access, and what it hands back. The wheel is published with a SHA256 checksum that this repository pins, so you can confirm you installed the same artifact we did.
+
+## The security gate, and using it in your own product
+
+Motivs Guard is the layer between untrusted incoming data and whatever consumes it downstream, an AI model, a warehouse, a billing system. In this app it is what reads your bill: it masks every PII field (CUPS, NIF, IBAN, address, name) in memory before any other code sees the document.
+
+It is a Python library, not a service. You embed it in the backend you already run, and it works against a contract you write in YAML describing what the data is allowed to look like. Each file comes back with one of three verdicts:
+
+| Verdict | Meaning |
+|---|---|
+| DELIVERED | the file matched the contract, transformations applied, safe to pass on |
+| AWAITING_APPROVAL | the file changed in a plausible way, an operator decides before it moves |
+| QUARANTINED | the file violated the contract, it is isolated with evidence and never reaches the consumer |
+
+What it does on the way there: validates structure and values against your contract, scans content for injection attempts, tokenizes PII with HMAC so joins still work but the original cannot be recovered, and remembers operator decisions so an approved change is auto approved next time.
+
+If you have a pipeline where untrusted files reach something expensive to get wrong, it is licensable for your project. Open an issue in this repository to start a conversation.
 
 ## Architecture
 
@@ -74,7 +90,7 @@ The reasoning: the gate is the part you'd want to trust on your bill data. We sh
 backend/
   app/
     core/       settings, logging
-    motivs/     sre gate factory, emitter, per-upload wrapper
+    motivs/     security gate factory, emitter, per-upload wrapper
     factura/    pdf bill text extraction
     tariff/     2.0TD 2026 tariff model, bill decomposer, offer cost estimator
     cnmc/       CNMC pdf snapshot parser
@@ -98,4 +114,4 @@ rm -rf ~/.motivs/factura ~/.local/bin/motivs-factura
 ## License
 
 Frontend and backend source: see repository LICENSE (forthcoming).
-Motivs SRE library: proprietary, see the LICENSE file shipped with the wheel.
+Motivs Guard: proprietary, see the LICENSE file shipped with the wheel.
