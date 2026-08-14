@@ -19,10 +19,10 @@ WORKDIR /app
 
 COPY pyproject.toml ./
 
-ARG MOTIVS_SRE_WHEEL_URL="https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl"
+ARG MOTIVS_SRE_WHEEL_URL="https://github.com/Rizos13/guard-dist/releases/download/v0.8.0/motivs_guard-0.8.0-cp313-none-any.whl"
 # checksum kept here rather than fetched next to the artifact, so a replaced
 # release does not also get to replace what it is checked against
-ARG MOTIVS_SRE_WHEEL_SHA256="349cbd1ba9334976506bf6559e59ca6f4f685aca6b8831e2c8c88b61ad2f69a7"
+ARG MOTIVS_SRE_WHEEL_SHA256="b7b2083beaeb47d2c398fa2df5b5b51ffd8917eeacd02da14211f09ebc394e2e"
 
 # pip parses the wheel filename for metadata, so it has to keep its own name
 RUN pip install --upgrade pip && \
