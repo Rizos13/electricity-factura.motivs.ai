@@ -22,7 +22,7 @@ dependencies = [
   "pillow>=10.4.0",
   # pinned to the published artifact on purpose. a bare name would be resolved
   # from the public index, where this name is not registered by us
-  "motivs-sre @ https://github.com/Rizos13/guard-dist/releases/download/v0.5.0/motivs_sre-0.5.0-py3-none-any.whl",
+  "motivs-guard @ https://github.com/Rizos13/guard-dist/releases/download/v0.8.0/motivs_guard-0.8.0-cp313-none-any.whl",
 ]
 
 [project.optional-dependencies]
