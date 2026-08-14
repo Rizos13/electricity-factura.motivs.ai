@@ -68,11 +68,22 @@ case "$cmd" in
         git pull --rebase --quiet
         source .venv/bin/activate
         if [ -n "${MOTIVS_SRE_WHEEL_URL:-}" ]; then
+            # a wheel pulled from a url the caller chose needs the checksum the
+            # caller expects, otherwise the refresh installs whatever answers
+            [ -n "${MOTIVS_SRE_WHEEL_SHA256:-}" ] || \
+                die "MOTIVS_SRE_WHEEL_URL is set without MOTIVS_SRE_WHEEL_SHA256, refusing to install an unverified wheel"
             say "refreshing motivs-sre wheel..."
-            tmp=$(mktemp /tmp/motivs_sre_XXXXXX.whl)
+            # pip parses the wheel filename for metadata, keep the original name
+            tmp_dir=$(mktemp -d /tmp/motivs_sre_XXXXXX)
+            tmp="$tmp_dir/$(basename "$MOTIVS_SRE_WHEEL_URL")"
             curl -fsSL "$MOTIVS_SRE_WHEEL_URL" -o "$tmp"
+            actual=$(shasum -a 256 "$tmp" | awk '{print $1}')
+            if [ "$actual" != "$MOTIVS_SRE_WHEEL_SHA256" ]; then
+                rm -rf "$tmp_dir"
+                die "wheel checksum mismatch, expected $MOTIVS_SRE_WHEEL_SHA256, got $actual"
+            fi
             pip install --quiet --force-reinstall "$tmp"
-            rm -f "$tmp"
+            rm -rf "$tmp_dir"
         fi
         say "done"
         ;;
