@@ -82,6 +82,7 @@ case "$cmd" in
                 rm -rf "$tmp_dir"
                 die "wheel checksum mismatch, expected $MOTIVS_SRE_WHEEL_SHA256, got $actual"
             fi
+            pip uninstall --quiet --yes motivs-sre >/dev/null 2>&1 || true
             pip install --quiet --force-reinstall "$tmp"
             rm -rf "$tmp_dir"
         fi
